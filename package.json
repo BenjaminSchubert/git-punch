@@ -1,0 +1,21 @@
+{
+  "name": "tweb-lab01",
+  "version": "0.1.0",
+  "author": "Benjamin Schubert and Basile Vu",
+  "description": "A sample Node.js app for our TWEB lab",
+  "main": "index.js",
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Flagoul/HEIG_TWEB_2016_lab01"
+  },
+
+  "scripts": {
+    "start": "node index.js"
+  },
+
+  "dependencies": {
+    "express": "4.14.0",
+    "ejs": "2.5.2"
+  }
+}
