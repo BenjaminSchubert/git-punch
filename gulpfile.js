@@ -73,7 +73,7 @@ gulp.task('templates', function() {
 
 gulp.task("app", ["templates"], function() {
     var b = browserify({
-        entries: ["app/index.js", "dist/templates.js"],
+        entries: ["app/app.js", "dist/templates.js"],
         debug: !production,
         read: false,
         transform: [ngAnnotate]
