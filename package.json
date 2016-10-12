@@ -1,9 +1,9 @@
 {
-  "name": "tweb-lab01",
+  "name": "Github-Stats",
   "version": "0.1.0",
   "author": "Benjamin Schubert and Basile Vu",
-  "description": "A sample Node.js app for our TWEB lab",
-  "main": "index.js",
+  "description": "A little webapp to get statistics about commits",
+  "main": "server/index.js",
 
   "repository": {
     "type": "git",
@@ -11,11 +11,42 @@
   },
 
   "scripts": {
-    "start": "node index.js"
+    "start": "node server/index.js",
+    "watch": "gulp watch",
+    "prestart": "npm run clean:dist && npm run build",
+    "build": "gulp build",
+    "prebuild": "npm run clean:dist",
+    "clean": "npm cache clean && npm run clean:dist && rimraf -- node_modules npm-debug.log",
+    "clean:dist": "rimraf -- dist"
   },
 
   "dependencies": {
     "express": "4.14.0",
-    "ejs": "2.5.2"
+	"angular": "1.5.8",
+    "angular-ui-router": "0.3.1",
+    "express-session": "1.14.1",
+    "request": "2.75.0",
+    "request-promise": "4.1.1",
+
+    "bootstrap": "3.3.7"
+  },
+
+  "devDependencies": {
+    "browserify": "13.1.0",
+    "browserify-ngannotate": "2.0.0",
+    "gulp": "3.9.1",
+    "gulp-live-server": "0.0.30",
+    "gulp-less": "3.1.0",
+    "gulp-purifycss": "0.2.0",
+    "gulp-cachebust": "0.0.6",
+    "gulp-strip-css-comments": "1.2.0",
+    "gulp-htmlmin": "3.0.0",
+    "vinyl-source-stream": "1.1.0",
+    "vinyl-buffer": "1.0.0",
+    "gulp-sourcemaps": "2.0.1",
+    "gulp-clean": "0.3.2",
+    "gulp-ng-html2js": "0.2.2",
+    "gulp-concat": "2.6.0",
+    "gulp-uglify": "2.0.0"
   }
 }
