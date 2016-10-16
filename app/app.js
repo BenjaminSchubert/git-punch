@@ -1,17 +1,21 @@
-(function() {
-    "use strict";
+"use strict";
 
-    var angular = require('angular');
+var angular = require("angular");
 
-    require("./about/about.module");
+require("./modules.config");
 
-    require("angular-ui-router");
+var githubStatsApp = angular.module("gstats", [
+    // third party modules
+    "ui.router",
 
-    var githubStatsApp = angular.module('gstats', ['ui.router', "templates", "gstats.about"]);
+    // local modules
+    "templates",
+    "gstats.about",
+    "gstats.punchcard"
+]);
 
-    githubStatsApp.config(function ($stateProvider, $urlRouterProvider) {
-        $urlRouterProvider.when('', '/');
-        $urlRouterProvider.otherwise('/');
-    });
 
-})();
+githubStatsApp.config(function ($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.when("", "/");
+    $urlRouterProvider.otherwise("/");
+});
