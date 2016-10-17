@@ -16,7 +16,7 @@ app.controller('gstats.punchcardController', ["$scope", "gstats.punchcard", func
                     if (point !== undefined) {
                         point[2] += 1;
                     } else {
-                        $scope.points.push([commit.hour, commit.day, 1]);
+                        $scope.points.data.push([commit.hour, commit.day, 1]);
                     }
                 })
             });
