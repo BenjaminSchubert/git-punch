@@ -4,16 +4,19 @@ function xAxis() {
     var hours = ["12 am"];
 
     for (var i=0; i < 12; i++) {
-        hours.push("" + i + " am");
+        hours.push(i + " am");
     }
 
     hours.push(["12 pm"]);
 
     for (var j=0; j < 12; j++) {
-        hours.push("" + j + " pm");
+        hours.push(j + " pm");
     }
 
+    return hours;
 }
+
+
 var app = angular.module('gstats.punchcard');
 
 app.controller('gstats.punchcardController', ["$scope", "gstats.punchcard", function PunchcardController($scope, $punchcard) {
@@ -36,6 +39,10 @@ app.controller('gstats.punchcardController', ["$scope", "gstats.punchcard", func
             });
         })
     });
+
+    Promises.all($punchcard).then(function(data) {
+        console.log($scope.points);
+    })
 
     $scope.chartConfig = {
         options: {
