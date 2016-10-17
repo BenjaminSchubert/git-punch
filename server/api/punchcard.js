@@ -1,6 +1,40 @@
 var router = require("express").Router();
 var gApi = require("../utils/github-api");
 
+var Commit = require("../db/db").Commit;
+
+
+function saveCommit(commit, project) {
+    var date = new Date(commit.commit.author.date);
+
+    var newCommit = new Commit({
+        _id: commit.sha,
+        project: project,
+        hour: date.getHours(),
+        day: date.getDay(),
+        files: commit.files.map(function (file) {
+            return file.filename;
+        })
+    });
+
+    newCommit.save();
+    return newCommit;
+}
+
+
+function retrieveCommit(commit, request, project) {
+    return Commit.findById(commit["sha"], "-__v -_id").then(function (object) {
+        if (object === null) {
+            return gApi(commit["url"], request.session, true).then(function(entry) {
+                return saveCommit(entry, project);
+            });
+        } else {
+            return object;
+        }
+    });
+}
+
+
 router.get("/projects", function(request, response) {
     gApi("user/repos?per_page=100", request.session)
         .then(function(data) {
@@ -29,23 +63,13 @@ router.get("/commits/:user/:project", function(request, response) {
     response.setHeader('Content-Type', 'application/json');
     gApi(url, request.session)
         .then(function (data) {
+            // FIXME : would this be possible with ONE mongodb call ?
             return Promise.all(data.map(function (commit) {
-                return gApi(commit["url"], request.session, true);
+                return retrieveCommit(commit, request, request.params.project);
             }))
         })
-        .then(function (commits) {
-            response.send(JSON.stringify([].concat.apply([], commits.map(function (commit) {
-                var date = new Date(commit.commit.author.date);
-
-                return {
-                    sha: commit.sha,
-                    hour: date.getHours(),
-                    day: date.getDay(),
-                    files: commit.files.map(function (file) {
-                        return file.filename;
-                    })
-                }
-            }))));
+        .then(function(commits) {
+            response.send(commits);
         })
         .catch(function (error) {
             if (error.statusCode === 409) {

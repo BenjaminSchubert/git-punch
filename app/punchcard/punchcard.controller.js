@@ -3,13 +3,13 @@ require("angular");
 function xAxis() {
     var hours = ["12 am"];
 
-    for (var i=0; i < 12; i++) {
+    for (var i=1; i < 12; i++) {
         hours.push(i + " am");
     }
 
     hours.push(["12 pm"]);
 
-    for (var j=0; j < 12; j++) {
+    for (var j=1; j < 12; j++) {
         hours.push(j + " pm");
     }
 
@@ -27,7 +27,7 @@ app.controller('gstats.punchcardController', ["$scope", "gstats.punchcard", func
             promise.then(function(commits) {
                 commits.map(function(commit) {
                     var point = $scope.points.data.find(function(p) {
-                        return commit.hour == p.hour && commit.day == p.day;
+                        return commit.hour == p[0] && commit.day == p[1];
                     });
 
                     if (point !== undefined) {
@@ -35,14 +35,11 @@ app.controller('gstats.punchcardController', ["$scope", "gstats.punchcard", func
                     } else {
                         $scope.points.data.push([commit.hour, commit.day, 1]);
                     }
-                })
+                });
+                console.log($scope.points);
             });
         })
     });
-
-    Promises.all($punchcard).then(function(data) {
-        console.log($scope.points);
-    })
 
     $scope.chartConfig = {
         options: {
