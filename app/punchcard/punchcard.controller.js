@@ -1,5 +1,19 @@
 require("angular");
 
+function xAxis() {
+    var hours = ["12 am"];
+
+    for (var i=0; i < 12; i++) {
+        hours.push("" + i + " am");
+    }
+
+    hours.push(["12 pm"]);
+
+    for (var j=0; j < 12; j++) {
+        hours.push("" + j + " pm");
+    }
+
+}
 var app = angular.module('gstats.punchcard');
 
 app.controller('gstats.punchcardController', ["$scope", "gstats.punchcard", function PunchcardController($scope, $punchcard) {
@@ -34,12 +48,7 @@ app.controller('gstats.punchcardController', ["$scope", "gstats.punchcard", func
         },
 
         xAxis: {
-            type: "datetime",
-            dateTimeLabelFormats: {
-                hour: '%I %P',
-                day: "%I %P"
-            },
-            tickInterval: 3600000
+            categories: xAxis()
         },
 
         yAxis: {
