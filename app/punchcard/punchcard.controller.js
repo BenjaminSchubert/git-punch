@@ -1,40 +1,22 @@
 require("angular");
 
-function xAxis() {
-    var hours = ["12 am"];
-
-    for (var i=1; i < 12; i++) {
-        hours.push(i + " am");
-    }
-
-    hours.push(["12 pm"]);
-
-    for (var j=1; j < 12; j++) {
-        hours.push(j + " pm");
-    }
-
-    return hours;
-}
-
 
 var app = angular.module('gstats.punchcard');
 
 app.controller('gstats.punchcardController', ["$scope", "gstats.punchcard", function PunchcardController($scope, $punchcard) {
-    $scope.points = { data: [] };
+    $scope.points = { data: [], color: "grey" };
+
+    for (var i=0; i < 24; i++) {
+        for (var j=0; j < 7; j++) {
+            $scope.points.data.push([i, j, 0]);
+        }
+    }
 
     $punchcard.commits.then(function(promises) {
         promises.map(function(promise) {
             promise.then(function(commits) {
                 commits.map(function(commit) {
-                    var point = $scope.points.data.find(function(p) {
-                        return commit.hour == p[0] && commit.day == p[1];
-                    });
-
-                    if (point !== undefined) {
-                        point[2] += 1;
-                    } else {
-                        $scope.points.data.push([commit.hour, commit.day, 1]);
-                    }
+                    $scope.points.data[commit.hour * 7 + commit.day][2] += 1;
                 });
                 console.log($scope.points);
             });
@@ -44,7 +26,24 @@ app.controller('gstats.punchcardController', ["$scope", "gstats.punchcard", func
     $scope.chartConfig = {
         options: {
             chart: {
-                defaultSeriesType: 'scatter'
+                type: 'bubble',
+                plotBorderWidth: 1,
+                zoomType: 'xy'
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                bubble:{
+                    minSize:'0%',
+                    maxSize:'12%'
+                }
+            },
+            tooltip: {
+                formatter: function() {
+                    var val = this.point.z;
+                    return val + " commit" + ((val > 1) ? "s" : "");
+                }
             }
         },
         title: {
@@ -52,11 +51,33 @@ app.controller('gstats.punchcardController', ["$scope", "gstats.punchcard", func
         },
 
         xAxis: {
-            categories: xAxis()
+            minorGridLineDashStyle: 'dash',
+            minorTickInterval: 1,
+            minorTickWidth: 0,
+            tickInterval: 1,
+
+            labels: {
+                formatter: function() {
+                    var val = this.value;
+                    if (val == 0)
+                        return "12a";
+                    else if (val == 12)
+                        return "12p";
+                    else if (val > 12)
+                        return (val - 12) + "p";
+                    else
+                        return val + "a";
+                }
+            }
         },
 
         yAxis: {
-            categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', "Sunday"].reverse()
+            reversed: true,
+            startOnTick: false,
+            endOnTick: false,
+            maxPadding: 0.9,
+            lineWidth: 0,
+            categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', "Sunday"]
         },
 
         series: [$scope.points]

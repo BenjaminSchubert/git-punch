@@ -2,7 +2,10 @@
 
 var angular = require("angular");
 
-require("./modules.config");
+require("angular-ui-router");
+require("./punchcard/punchcard.module");
+require("./about/about.module");
+
 
 var githubStatsApp = angular.module("gstats", [
     // third party modules

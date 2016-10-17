@@ -34,6 +34,7 @@
 
     "bootstrap": "3.3.7",
     "highcharts": "5.0.0",
+    "highcharts-more": "0.1.2",
     "highcharts-ng": "0.0.13"
   },
 

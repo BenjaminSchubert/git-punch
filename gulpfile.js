@@ -25,6 +25,7 @@ var libs = [
     "angular",
     "angular-ui-router",
     "highcharts",
+    "highcharts-more",
     "highcharts-ng"
 ];
 
