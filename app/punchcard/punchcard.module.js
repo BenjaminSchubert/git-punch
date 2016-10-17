@@ -2,12 +2,10 @@
 
 var angular = require("angular");
 
+global.Highcharts = require("highcharts");
 require("highcharts-ng");
 
 angular.module("gstats.punchcard", ["highcharts-ng"])
-    .component('punchcard', {
-    template: "<p>Just testing</p>"})
-
     .config(function ($stateProvider) {
         $stateProvider.state({
             name: 'punchcard',
@@ -17,4 +15,6 @@ angular.module("gstats.punchcard", ["highcharts-ng"])
     });
 
 
+require("./punchcard.service");
+require("./punchcard.controller");
 require("./punchcard.component");

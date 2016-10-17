@@ -1,8 +1,10 @@
 var express = require("express");
 var session = require("express-session");
+var MongoDBStore = require('connect-mongodb-session')(session);
 
 
 var auth = require("./auth");
+var api = require("./api/api");
 
 
 var SECRET_KEY = process.env.SECRET_KEY;
@@ -15,10 +17,17 @@ if (SECRET_KEY === undefined) {
 
 var app = express();
 
+var store = new MongoDBStore({
+    uri: 'mongodb://localhost:27017/gstats',
+    collection: 'gstats.sessions'
+});
+
+
 app.use(session({
     secret: SECRET_KEY,
     resave: false,
     saveUninitialized: false,
+    store: store,
     name: "session",
     cookie: {
         httpOnly: true,
@@ -34,6 +43,7 @@ app.set("port", (process.env.PORT || 5000));
 
 app.use(express.static("dist/"));
 app.use("/auth", auth);
+app.use("/api", api);
 
 
 app.listen(app.get("port"), function() {

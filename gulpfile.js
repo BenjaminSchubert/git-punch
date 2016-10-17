@@ -23,7 +23,9 @@ var production = (process.env.NODE_ENV === "production");
 
 var libs = [
     "angular",
-    "angular-ui-router"
+    "angular-ui-router",
+    "highcharts",
+    "highcharts-ng"
 ];
 
 

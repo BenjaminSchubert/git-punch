@@ -2,7 +2,7 @@ var crypto = require("crypto");
 var http = require("request-promise");
 var router = require("express").Router();
 
-var api = require("./utils/github-api");
+var gApi = require("./utils/github-api");
 
 
 const GITHUB_CLIENT = process.env["GITHUB_CLIENT"];
@@ -30,7 +30,7 @@ router.get("/login", function(request, response) {
     response.statusCode = 302;
     response.setHeader("location", "https://github.com/login/oauth/authorize?"
         + "client_id=" + GITHUB_CLIENT
-        + "&scope=repo:status"
+        + "&scope=repo"
         + "&state=" + state
     );
     response.end();
@@ -55,10 +55,15 @@ router.get("/callback", function(request, response) {
     http.post({url: url, json: true })
         .then(function(res) {
             request.session.access_token = res["access_token"];
-            response.status(301).redirect("/");
+            gApi("user", request.session).then(function(result) {
+                request.session.login = result["login"];
+
+                response.status(301).redirect(request.session.redirect || "/");
+                delete request.session.redirect;
+
+            });
         });
 });
-
 
 
 module.exports = router;
