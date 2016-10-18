@@ -41,14 +41,14 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
 
                     commit.languages.map(function(language) {
                         if ($scope.series.languages[language] === undefined) {
-                            $scope.series.languages[language] = { data: setupSerie(), color: "red", commits: 0 };
+                            $scope.series.languages[language] = { data: setupSerie(), color: "red", commits: 0, title: language };
                         }
                         $scope.series.languages[language].data[commit.hour * 7 + commit.day][2] += 1;
                         $scope.series.languages[language].commits += 1;
                     });
 
                     if ($scope.series.projects[commit.project] === undefined) {
-                        $scope.series.projects[commit.project] = { data: setupSerie(), color: "red", commits: 0};
+                        $scope.series.projects[commit.project] = { data: setupSerie(), color: "red", commits: 0, title: commit.project};
                     }
                     $scope.series.projects[commit.project].commits += 1;
 

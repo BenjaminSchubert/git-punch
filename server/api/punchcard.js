@@ -43,7 +43,7 @@ function saveCommit(commit, project) {
 
 
 function retrieveCommit(commit, request, project) {
-    return Commit.findById(commit["sha"], "-__v -_id").then(function (object) {
+    return Commit.findById(commit["sha"], "-__v -_id -extensions").then(function (object) {
         if (object === null) {
             return gApi(commit["url"], request.session, true).then(function(entry) {
                 return saveCommit(entry, project);

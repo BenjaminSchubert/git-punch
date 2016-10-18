@@ -1,6 +1,6 @@
 <ul class="list-group">
-    <li class="list-group-item" ng-repeat="(language, data) in $ctrl.series">
+    <li class="list-group-item" ng-repeat="data in $ctrl.series | orderByCommit">
         <span class="badge">{{ data.commits }}</span>
-        {{ language }}
+        {{ data.title }}
     </li>
 </ul>
