@@ -11,6 +11,7 @@
   },
 
   "scripts": {
+    "postinstall": "NODE_ENV=production npm run build",
     "start": "node server/index.js",
     "watch": "gulp watch",
     "prestart": "npm run clean:dist && npm run build",
