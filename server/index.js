@@ -7,18 +7,25 @@ var auth = require("./auth");
 var api = require("./api/api");
 
 
-var SECRET_KEY = process.env.SECRET_KEY;
+const SECRET_KEY = process.env.SECRET_KEY;
+const MONGODB = process.env["MONGODB_URI"];
 
 if (SECRET_KEY === undefined) {
     console.log("SECRET_KEY is not defined");
     process.exit(1);
 }
 
+if (MONGODB === undefined) {
+    console.log("MONGODB is undefined");
+    process.exit(1);
+}
+
+
 
 var app = express();
 
 var store = new MongoDBStore({
-    uri: 'mongodb://localhost:27017/gstats',
+    uri: MONGODB,
     collection: 'gstats.sessions'
 });
 
