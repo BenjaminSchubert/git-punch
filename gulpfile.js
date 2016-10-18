@@ -110,7 +110,7 @@ gulp.task("watch", ["build"], function () {
     server.start();
 
     gulp.watch(["server/**/*.js"], server.start.bind(server));
-    gulp.watch(["app/*.js", "app/**/*.js", "app/**/*.html"], function(file) {
+    gulp.watch(["app/*.js", "app/**/*.js", "app/**/*.html", "app/**/*.less"], function(file) {
         gulp.run("build");
         server.notify.apply(server, [file]);
     });

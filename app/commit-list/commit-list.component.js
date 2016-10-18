@@ -7,7 +7,6 @@ angular.module('gstats.commit-list').component('commitList', {
     controller: "gstats.commitListController",
 
     bindings: {
-        series: '<',
-        hover: "&"
+        series: '<'
     }
 });

@@ -17,22 +17,48 @@ function getTitle(commits, projects) {
     }
 }
 
+
+function findAndRemove(series, info) {
+    series.splice(
+        series.findIndex(function(element) {
+            return element.category == info.category && element.title == info.title;
+        }),
+        1
+    );
+}
+
 angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$scope", "gstats.punchcard", function PunchcardController($scope, $punchcard) {
     $scope.totalCommits = 0;
     $scope.totalProjects = 1;
     $scope.projectFetched = 0;
+    $scope.selected = null;
 
-    $scope.$on("select", function(event, data) {
+    $scope.reset = function() {
+        if ($scope.selected == null) {
+            return;
+        }
+
+        $scope.$broadcast("reset-selection");
+        findAndRemove($scope.chartConfig.series, $scope.selected);
+        $scope.selected = null;
+    };
+
+    $scope.$on("hover", function(event, data) {
        $scope.chartConfig.series.push($scope.series[data.category][data.title]);
     });
 
-    $scope.$on("unselect", function(event, data) {
-        $scope.chartConfig.series.splice(
-            $scope.chartConfig.series.findIndex(function(element) {
-                return element.category == data.category && element.title == data.title;
-            }),
-            1
-        )
+    $scope.$on("blur", function(event, data) {
+        findAndRemove($scope.chartConfig.series, data);
+    });
+
+    $scope.$on("select", function(event, data) {
+        if ($scope.selected !== null) {
+            findAndRemove($scope.chartConfig.series, $scope.selected);
+            $scope.selected = null;
+        }
+        $scope.selected = data;
+        $scope.chartConfig.series.push($scope.series[data.category][data.title]);
+        $scope.$broadcast("reset-selection");
     });
 
     $scope.series = {
