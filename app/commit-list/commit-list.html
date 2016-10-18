@@ -1,5 +1,5 @@
 <ul class="list-group">
-    <li class="list-group-item" ng-repeat="data in $ctrl.series | orderByCommit">
+    <li class="list-group-item" ng-repeat="data in $ctrl.series | orderByCommit" ng-mouseenter="select(data)" ng-mouseleave="unselect(data)">
         <span class="badge">{{ data.commits }}</span>
         {{ data.title }}
     </li>

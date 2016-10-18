@@ -22,6 +22,19 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
     $scope.totalProjects = 1;
     $scope.projectFetched = 0;
 
+    $scope.$on("select", function(event, data) {
+       $scope.chartConfig.series.push($scope.series[data.category][data.title]);
+    });
+
+    $scope.$on("unselect", function(event, data) {
+        $scope.chartConfig.series.splice(
+            $scope.chartConfig.series.findIndex(function(element) {
+                return element.category == data.category && element.title == data.title;
+            }),
+            1
+        )
+    });
+
     $scope.series = {
         global: {data: setupSerie(), color: "grey"},
         languages: {},
@@ -41,15 +54,16 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
 
                     commit.languages.map(function(language) {
                         if ($scope.series.languages[language] === undefined) {
-                            $scope.series.languages[language] = { data: setupSerie(), color: "red", commits: 0, title: language };
+                            $scope.series.languages[language] = { data: setupSerie(), color: "red", commits: 0, title: language, category: "languages" };
                         }
                         $scope.series.languages[language].data[commit.hour * 7 + commit.day][2] += 1;
                         $scope.series.languages[language].commits += 1;
                     });
 
                     if ($scope.series.projects[commit.project] === undefined) {
-                        $scope.series.projects[commit.project] = { data: setupSerie(), color: "red", commits: 0, title: commit.project};
+                        $scope.series.projects[commit.project] = { data: setupSerie(), color: "red", commits: 0, title: commit.project, category: "projects"};
                     }
+                    $scope.series.projects[commit.project].data[commit.hour * 7 + commit.day][2] += 1;
                     $scope.series.projects[commit.project].commits += 1;
 
                 });

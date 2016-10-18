@@ -16,7 +16,7 @@ if (SECRET_KEY === undefined) {
 }
 
 if (MONGODB === undefined) {
-    console.log("MONGODB is undefined");
+    console.log("MONGODB_URI is undefined");
     process.exit(1);
 }
 

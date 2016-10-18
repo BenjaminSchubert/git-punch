@@ -7,7 +7,7 @@ var Schema = mongoose.Schema;
 const MONGODB = process.env["MONGODB_URI"];
 
 if (MONGODB === undefined) {
-    console.log("MONGODB is undefined");
+    console.log("MONGODB_URI is undefined");
     process.exit(1);
 }
 
