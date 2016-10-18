@@ -41,6 +41,7 @@
   },
 
   "devDependencies": {
+    "rimraf": "2.5.4",
     "browserify": "13.1.0",
     "browserify-ngannotate": "2.0.0",
     "gulp": "3.9.1",
