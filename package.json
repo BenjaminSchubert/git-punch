@@ -11,10 +11,9 @@
   },
 
   "scripts": {
-    "postinstall": "NODE_ENV=production npm run build",
+    "postinstall": "npm run build",
     "start": "node server/index.js",
     "watch": "gulp watch",
-    "prestart": "npm run clean:dist && npm run build",
     "build": "gulp build",
     "prebuild": "npm run clean:dist",
     "clean": "npm cache clean && npm run clean:dist && rimraf -- node_modules npm-debug.log",
@@ -39,7 +38,7 @@
     "highcharts": "5.0.0",
     "highcharts-more": "0.1.2",
     "highcharts-ng": "0.0.13",
-    
+
     "rimraf": "2.5.4",
     "browserify": "13.1.0",
     "browserify-ngannotate": "2.0.0",
