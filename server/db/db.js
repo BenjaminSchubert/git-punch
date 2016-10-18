@@ -4,7 +4,14 @@ mongoose.Promise = global.Promise;
 var Schema = mongoose.Schema;
 
 
-mongoose.connect("mongodb://localhost/gstats");
+const MONGODB = process.env["MONGODB_URI"];
+
+if (MONGODB === undefined) {
+    console.log("MONGODB is undefined");
+    process.exit(1);
+}
+
+mongoose.connect(MONGODB);
 
 
 var Commit = mongoose.model('Commit', new Schema({
