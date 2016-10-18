@@ -1,20 +1,40 @@
 var router = require("express").Router();
+var languages = require('lang-map').languages;
+
+
 var gApi = require("../utils/github-api");
 
 var Commit = require("../db/db").Commit;
 
 
+function getExtensions(files) {
+    return files.map(function(file) {
+        return file.filename.split("/").pop().split(".").pop();
+    }).filter(function(item, pos, array) {
+        return array.indexOf(item) == pos;
+    });
+}
+
+function getLanguages(extensions) {
+    return extensions.map(function(extension) {
+        return languages(extension);
+    }).filter(function(item, pos, array) {
+        return array.indexOf(item) == pos;
+    });
+}
+
+
 function saveCommit(commit, project) {
     var date = new Date(commit.commit.author.date);
+    var extensions = getExtensions(commit.files);
 
     var newCommit = new Commit({
         _id: commit.sha,
         project: project,
         hour: date.getHours(),
         day: date.getDay(),
-        files: commit.files.map(function (file) {
-            return file.filename;
-        })
+        languages: getLanguages(extensions),
+        extensions: extensions
     });
 
     newCommit.save();

@@ -6,8 +6,10 @@ global.Highcharts = require("highcharts");
 require("highcharts-more")(Highcharts);
 require("highcharts-ng");
 
+require("../commit-list/commit-list.module");
 
-angular.module("gstats.punchcard", ["highcharts-ng"])
+
+angular.module("gstats.punchcard", ["highcharts-ng", "gstats.commit-list"])
     .config(function ($stateProvider) {
         $stateProvider.state({
             name: 'punchcard',
