@@ -1,9 +1,7 @@
 var router = require("express").Router();
+
 var linguist = require("../utils/linguist");
-
-
 var gApi = require("../utils/github-api");
-
 var Commit = require("../db/db").Commit;
 
 
@@ -14,6 +12,7 @@ function getExtensions(files) {
         return array.indexOf(item) == pos;
     });
 }
+
 
 function getLanguages(extensions, projectLanguages) {
     return extensions.map(function(extension) {
@@ -75,28 +74,7 @@ function loadCommits(commits, session, user, project) {
 }
 
 
-router.get("/projects", function(request, response) {
-    gApi("user/repos?per_page=100", request.session)
-        .then(function(data) {
-            response.setHeader('Content-Type', 'application/json');
-            response.send(JSON.stringify(data.map(function(project) {
-                return project["full_name"];
-            })));
-        })
-        .catch(function(err) {
-            if (err.statusCode === 401) {
-                // FIXME : this doesn't work
-                request.session.redirect = "/#/punchcard";
-                response.status(301).redirect("/auth/login");
-            } else {
-                console.log(err);
-                response.status(500).send();
-            }
-        })
-});
-
-
-router.get("/commits/:user/:project", function(request, response) {
+router.get("/:user/:project", function(request, response) {
     var url = "repos/" + request.params.user + "/" + request.params.project + "/commits" +
         "?author=" + request.session.login + "&per_page=100";
 
