@@ -27,7 +27,7 @@ function findAndRemove(series, info) {
     );
 }
 
-angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$scope", "gstats.punchcard", function PunchcardController($scope, $punchcard) {
+angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$scope", "$http", "gstats.punchcard", function PunchcardController($scope, $http, $punchcard) {
     $scope.totalCommits = 0;
     $scope.totalProjects = 1;
     $scope.projectFetched = 0;
@@ -62,7 +62,7 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
     });
 
     $scope.series = {
-        global: {data: setupSerie(), color: "grey"},
+        global: {data: setupSerie(), color: "#888"},
         languages: {},
         projects: {}
     };
@@ -71,8 +71,8 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
     $punchcard.commits.then(function(promises) {
         $scope.totalProjects = promises.length;
 
-        promises.map(function(promise) {
-            promise.then(function(commits) {
+        return Promise.all(promises.map(function(promise) {
+            return promise.then(function(commits) {
                 $scope.projectFetched += 1;
 
                 commits.map(function(commit) {
@@ -80,14 +80,14 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
 
                     commit.languages.map(function(language) {
                         if ($scope.series.languages[language] === undefined) {
-                            $scope.series.languages[language] = { data: setupSerie(), color: "red", commits: 0, title: language, category: "languages" };
+                            $scope.series.languages[language] = { data: setupSerie(), color: "#333", commits: 0, title: language, category: "languages" };
                         }
                         $scope.series.languages[language].data[commit.hour * 7 + commit.day][2] += 1;
                         $scope.series.languages[language].commits += 1;
                     });
 
                     if ($scope.series.projects[commit.project] === undefined) {
-                        $scope.series.projects[commit.project] = { data: setupSerie(), color: "red", commits: 0, title: commit.project, category: "projects"};
+                        $scope.series.projects[commit.project] = { data: setupSerie(), color: "#333", commits: 0, title: commit.project, category: "projects"};
                     }
                     $scope.series.projects[commit.project].data[commit.hour * 7 + commit.day][2] += 1;
                     $scope.series.projects[commit.project].commits += 1;
@@ -96,6 +96,12 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
                 $scope.totalCommits += commits.length;
                 $scope.chartConfig.title = getTitle($scope.totalCommits, $scope.totalProjects);
             });
+        }))
+    }).then(function() {
+        return $http.get("/api/colors", {params: { language: Object.keys($scope.series.languages) }});
+    }).then(function(request) {
+        Object.keys(request.data).map(function(language) {
+            $scope.series.languages[language].color = request.data[language];
         })
     });
 

@@ -6,7 +6,7 @@
             ng-click="select(data); $event.stopPropagation()"
             ng-class="{'selected': selected == data}"
     >
-        <span class="badge">{{ data.commits }}</span>
+        <span class="badge" ng-style="{'background-color': data.color}">{{ data.commits }}</span>
         {{ data.title }}
     </li>
 </ul>

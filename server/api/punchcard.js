@@ -1,5 +1,5 @@
 var router = require("express").Router();
-var languages = require('lang-map').languages;
+var linguist = require("../utils/linguist");
 
 
 var gApi = require("../utils/github-api");
@@ -15,26 +15,34 @@ function getExtensions(files) {
     });
 }
 
-function getLanguages(extensions) {
+function getLanguages(extensions, projectLanguages) {
     return extensions.map(function(extension) {
-        return languages(extension);
+        var languages = linguist.languages("." + extension);
+
+        if (languages === undefined) {
+            return "Other";
+        } else if (languages.length === 1) {
+            return languages[0];
+        } else {
+            return projectLanguages.filter(function(entry) {
+                return languages.indexOf(entry) !== -1;
+            })[0];
+        }
     }).filter(function(item, pos, array) {
         return array.indexOf(item) == pos;
     });
 }
 
 
-function saveCommit(commit, project) {
+function saveCommit(commit, project, languages) {
     var date = new Date(commit.commit.author.date);
-    var extensions = getExtensions(commit.files);
 
     var newCommit = new Commit({
         _id: commit.sha,
         project: project,
         hour: date.getHours(),
         day: date.getDay(),
-        languages: getLanguages(extensions),
-        extensions: extensions
+        languages: getLanguages(getExtensions(commit.files), languages)
     });
 
     newCommit.save();
@@ -42,16 +50,28 @@ function saveCommit(commit, project) {
 }
 
 
-function retrieveCommit(commit, request, project) {
-    return Commit.findById(commit["sha"], "-__v -_id -extensions").then(function (object) {
-        if (object === null) {
-            return gApi(commit["url"], request.session, true).then(function(entry) {
-                return saveCommit(entry, project);
-            });
-        } else {
-            return object;
-        }
-    });
+function loadCommits(commits, session, user, project) {
+    var project_languages;
+
+    return Promise.all(commits.map(function(commit) {
+        return Commit.findById(commit["sha"], "-__v -_id").then(function(object) {
+            if (object === null) {
+                if (project_languages === undefined) {
+                    project_languages = gApi("repos/" + user + "/" + project + "/languages", session);
+                }
+
+                return project_languages.then(function(languages) {
+                    languages = Object.keys(languages);
+                    return gApi(commit["url"], session, true).then(function(entry) {
+                        return saveCommit(entry, project, languages);
+                    });
+                });
+            } else {
+                return object;
+            }
+        });
+    }));
+
 }
 
 
@@ -82,11 +102,8 @@ router.get("/commits/:user/:project", function(request, response) {
 
     response.setHeader('Content-Type', 'application/json');
     gApi(url, request.session)
-        .then(function (data) {
-            // FIXME : would this be possible with ONE mongodb call ?
-            return Promise.all(data.map(function (commit) {
-                return retrieveCommit(commit, request, request.params.project);
-            }))
+        .then(function(data) {
+            return loadCommits(data, request.session, request.params.user, request.params.project);
         })
         .then(function(commits) {
             response.send(commits);

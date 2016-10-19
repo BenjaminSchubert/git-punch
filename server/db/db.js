@@ -23,8 +23,7 @@ var Commit = mongoose.model('Commit', new Schema({
     hour: Number,
     day: Number,
     project: String,
-    languages: [String],
-    extensions: [String]
+    languages: [String]
 }));
 
 
