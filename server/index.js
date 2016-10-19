@@ -26,7 +26,7 @@ var app = express();
 
 var store = new MongoDBStore({
     uri: MONGODB,
-    collection: 'gstats.sessions'
+    collection: 'sessions'
 });
 
 

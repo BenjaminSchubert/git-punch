@@ -68,14 +68,14 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
     };
 
 
-    $punchcard.commits.then(function(promises) {
-        $scope.totalProjects = promises.length;
+    $punchcard.projects.then(function(projects) {
+        $scope.totalProjects = projects.length;
 
-        return Promise.all(promises.map(function(promise) {
-            return promise.then(function(commits) {
+        return Promise.all(projects.map(function(promise) {
+            return promise.then(function(project) {
                 $scope.projectFetched += 1;
 
-                commits.map(function(commit) {
+                project.commits.map(function(commit) {
                     $scope.series.global.data[commit.hour * 7 + commit.day][2] += 1;
 
                     commit.languages.map(function(language) {
@@ -86,14 +86,15 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
                         $scope.series.languages[language].commits += 1;
                     });
 
-                    if ($scope.series.projects[commit.project] === undefined) {
-                        $scope.series.projects[commit.project] = { data: setupSerie(), color: "#333", commits: 0, title: commit.project, category: "projects"};
+                    if ($scope.series.projects[project.name] === undefined) {
+                        $scope.series.projects[project.name] = {
+                            data: setupSerie(), color: "#333", commits: 0, title: project.name, category: "projects", url: "https://github.com/" + project.fullName};
                     }
-                    $scope.series.projects[commit.project].data[commit.hour * 7 + commit.day][2] += 1;
-                    $scope.series.projects[commit.project].commits += 1;
+                    $scope.series.projects[project.name].data[commit.hour * 7 + commit.day][2] += 1;
+                    $scope.series.projects[project.name].commits += 1;
 
                 });
-                $scope.totalCommits += commits.length;
+                $scope.totalCommits += project.commits.length;
                 $scope.chartConfig.title = getTitle($scope.totalCommits, $scope.totalProjects);
             });
         }))

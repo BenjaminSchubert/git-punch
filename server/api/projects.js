@@ -1,14 +1,15 @@
 var router = require("express").Router();
+
 var ghApi = require("../utils/github-api");
 
 
 router.get("", function(request, response) {
     ghApi("user/repos?per_page=100", request.session)
-        .then(function(data) {
-            response.setHeader('Content-Type', 'application/json');
-            response.send(JSON.stringify(data.map(function(project) {
-                return project["full_name"];
-            })));
+        .then(function(projects) {
+            response.setHeader("Content-Type", "application/json");
+            response.send(projects.map(function(project) {
+                return { name: project.name, fullName: project.full_name }
+            }))
         })
         .catch(function(err) {
             if (err.statusCode === 401) {

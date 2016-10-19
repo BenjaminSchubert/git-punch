@@ -2,7 +2,9 @@ var router = require("express").Router();
 
 var linguist = require("../utils/linguist");
 var gApi = require("../utils/github-api");
-var Commit = require("../db/db").Commit;
+var db = require("../db/db");
+
+var Commit = db.Commit;
 
 
 function getExtensions(files) {
@@ -33,12 +35,11 @@ function getLanguages(extensions, projectLanguages) {
 }
 
 
-function saveCommit(commit, project, languages) {
+function saveCommit(commit, languages) {
     var date = new Date(commit.commit.author.date);
 
     var newCommit = new Commit({
         _id: commit.sha,
-        project: project,
         hour: date.getHours(),
         day: date.getDay(),
         languages: getLanguages(getExtensions(commit.files), languages)
@@ -53,7 +54,7 @@ function loadCommits(commits, session, user, project) {
     var project_languages;
 
     return Promise.all(commits.map(function(commit) {
-        return Commit.findById(commit["sha"], "-__v -_id").then(function(object) {
+        return Commit.findById(commit["sha"], "hour day languages -_id").then(function(object) {
             if (object === null) {
                 if (project_languages === undefined) {
                     project_languages = gApi("repos/" + user + "/" + project + "/languages", session);
@@ -61,10 +62,11 @@ function loadCommits(commits, session, user, project) {
 
                 return project_languages.then(function(languages) {
                     languages = Object.keys(languages);
-                    return gApi(commit["url"], session, true).then(function(entry) {
-                        return saveCommit(entry, project, languages);
+                    return gApi(commit["url"], session, true).then(function (entry) {
+                        return saveCommit(entry, languages);
                     });
                 });
+
             } else {
                 return object;
             }
@@ -79,6 +81,7 @@ router.get("/:user/:project", function(request, response) {
         "?author=" + request.session.login + "&per_page=100";
 
     response.setHeader('Content-Type', 'application/json');
+
     gApi(url, request.session)
         .then(function(data) {
             return loadCommits(data, request.session, request.params.user, request.params.project);

@@ -7,6 +7,7 @@
             ng-class="{'selected': selected == data}"
     >
         <span class="badge" ng-style="{'background-color': data.color}">{{ data.commits }}</span>
-        {{ data.title }}
+        <a href="{{ data.url }}" ng-if="data.url !== undefined" target="_blank">{{ data.title }}</a>
+        <span ng-if="data.url === undefined">{{ data.title }}</span>
     </li>
 </ul>
