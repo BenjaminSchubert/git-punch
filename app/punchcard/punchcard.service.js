@@ -3,7 +3,7 @@ require("angular");
 var app = angular.module('gstats.punchcard');
 
 
-app.factory('gstats.punchcard', function($http) {
+app.factory('gstats.punchcard', function($state, $http) {
     return {
         get projects() {
             return $http.get("api/projects")
@@ -13,6 +13,10 @@ app.factory('gstats.punchcard', function($http) {
                             return {commits: commits.data, name: project.name, fullName: project.fullName}
                         });
                     });
+                })
+                .catch(function() {
+                    window.location.href = "/auth/login";
+                    return [];
                 });
         }
 

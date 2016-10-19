@@ -13,9 +13,8 @@ router.get("", function(request, response) {
         })
         .catch(function(err) {
             if (err.statusCode === 401) {
-                // FIXME : this doesn't work
                 request.session.redirect = "/#/punchcard";
-                response.status(301).redirect("/auth/login");
+                response.status(401).send({url: "/auth/login"});
             } else {
                 console.log(err);
                 response.status(500).send();
