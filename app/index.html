@@ -10,15 +10,13 @@
 <body ng-app="gstats">
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
-            <div class="nav navbar-nav">
-                <a href="/auth/login" class="navbar-link">Sign in</a>
-            </div>
-            <div class="nav navbar-nav">
-                <a ui-sref="about" class="navbar-link">About</a>
-            </div>
-            <div class="nav navbar-nav">
-                <a ui-sref="punchcard" class="navbar-link">My Stats</a>
-            </div>
+            <ul class="nav navbar-nav">
+                <li><a ui-sref="about" class="navbar-link">About</a></li>
+                <li><a ui-sref="punchcard" class="navbar-link">My Stats</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/auth/login" class="navbar-link">Sign in with GitHub</a></li>
+            </ul>
         </div>
     </nav>
 

@@ -120,6 +120,13 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
                 bubble:{
                     minSize:'0%',
                     maxSize:'12%'
+                },
+                series: {
+                    states: {
+                        hover: {
+                            enabled: false
+                        }
+                    }
                 }
             },
             tooltip: {
@@ -153,6 +160,9 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
         },
 
         yAxis: {
+            title: {
+                text: null
+            },
             reversed: true,
             startOnTick: false,
             endOnTick: false,
