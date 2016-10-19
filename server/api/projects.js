@@ -1,6 +1,7 @@
 var router = require("express").Router();
 
 var ghApi = require("../utils/github-api");
+var linguist = require("../utils/linguist");
 
 
 router.get("", function(request, response) {
@@ -8,7 +9,7 @@ router.get("", function(request, response) {
         .then(function(projects) {
             response.setHeader("Content-Type", "application/json");
             response.send(projects.map(function(project) {
-                return { name: project.name, fullName: project.full_name }
+                return { name: project.name, fullName: project.full_name, color: linguist.color(project.language) || "#333" }
             }))
         })
         .catch(function(err) {

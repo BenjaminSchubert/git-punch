@@ -10,7 +10,7 @@ app.factory('gstats.punchcard', function($state, $http) {
                 .then(function(projects) {
                     return projects.data.map(function(project) {
                         return $http.get("api/commits/" + project.fullName).then(function(commits) {
-                            return {commits: commits.data, name: project.name, fullName: project.fullName}
+                            return {commits: commits.data, name: project.name, fullName: project.fullName, color: project.color}
                         });
                     });
                 })

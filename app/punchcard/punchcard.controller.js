@@ -88,7 +88,7 @@ angular.module('gstats.punchcard').controller('gstats.punchcard.controller', ["$
 
                     if ($scope.series.projects[project.name] === undefined) {
                         $scope.series.projects[project.name] = {
-                            data: setupSerie(), color: "#333", commits: 0, title: project.name, category: "projects", url: "https://github.com/" + project.fullName};
+                            data: setupSerie(), color: project.color, commits: 0, title: project.name, category: "projects", url: "https://github.com/" + project.fullName};
                     }
                     $scope.series.projects[project.name].data[commit.hour * 7 + commit.day][2] += 1;
                     $scope.series.projects[project.name].commits += 1;
