@@ -27,7 +27,7 @@ function getLanguages(extensions, projectLanguages) {
         } else {
             return projectLanguages.filter(function(entry) {
                 return languages.indexOf(entry) !== -1;
-            })[0];
+            })[0] || "Other";
         }
     }).filter(function(item, pos, array) {
         return array.indexOf(item) == pos;
