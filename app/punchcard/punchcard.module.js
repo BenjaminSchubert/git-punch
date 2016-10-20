@@ -9,16 +9,6 @@ require("highcharts-ng");
 require("../commit-list/commit-list.module");
 
 
-angular.module("gstats.punchcard", ["highcharts-ng", "gstats.commit-list"])
-    .config(function ($stateProvider) {
-        $stateProvider.state({
-            name: 'punchcard',
-            url: '/punchcard',
-            component: "punchcard"
-        });
-    });
+angular.module("gstats.punchcard", ["highcharts-ng", "gstats.commit-list"]);
 
-
-require("./punchcard.service");
 require("./punchcard.controller");
-require("./punchcard.component");

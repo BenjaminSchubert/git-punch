@@ -9,10 +9,7 @@
         </div>
 
     </div>
-    <div class="col-xs-12 col-lg-2">
-        <commit-list series="series.projects" title="'Project'"></commit-list>
-    </div>
-    <div class="col-xs-12 col-lg-2">
-        <commit-list series="series.languages" title="'Language'"></commit-list>
+    <div class="col-xs-12 col-lg-2" ng-repeat="(key, series) in otherSeries">
+        <commit-list series="series" title="key"></commit-list>
     </div>
 </div>

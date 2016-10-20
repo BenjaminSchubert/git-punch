@@ -5,7 +5,7 @@ var angular = require("angular");
 require("angular-ui-router");
 require("angular-animate");
 
-require("./punchcard/punchcard.module");
+require("./stats/stats.module");
 require("./about/about.module");
 
 
@@ -17,7 +17,7 @@ var githubStatsApp = angular.module("gstats", [
     // local modules
     "templates",
     "gstats.about",
-    "gstats.punchcard"
+    "gstats.stats"
 ]);
 
 

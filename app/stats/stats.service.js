@@ -1,9 +1,9 @@
 require("angular");
 
-var app = angular.module('gstats.punchcard');
+var app = angular.module('gstats.stats');
 
 
-app.factory('gstats.punchcard', function($state, $http) {
+app.factory('gstats.stats.service', function($state, $http) {
     return {
         get projects() {
             return $http.get("api/projects")
