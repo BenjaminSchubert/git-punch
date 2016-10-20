@@ -3,7 +3,7 @@ var angular = require("angular");
 
 function getTitle(commits, projects) {
     return {
-        text: 'Commit Statistics from ' + commits + " commits on " + projects + " projects."
+        text: 'Commit Statistics from ' + commits + " commits accross " + projects + " projects."
     }
 }
 
@@ -11,21 +11,21 @@ function getTitle(commits, projects) {
 angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", "$http", "$controller", "gstats.stats.service", function PunchcardController($scope, $http, $controller, $punchcard) {
     angular.extend(this, $controller('gstats.punchcard.controller', {$scope: $scope}));
 
-    $scope.totalCommits = 0;
-    $scope.totalProjects = 1;
-    $scope.projectFetched = 0;
+    var totalCommits = 0;
+    var totalProjects = 1;
+    var projectFetched = 0;
 
     $scope.otherSeries.projects = {};
     $scope.otherSeries.languages = {};
 
 
     $punchcard.projects.then(function(projects) {
-        $scope.totalProjects = projects.length;
+        totalProjects = projects.length;
 
         return Promise.all(projects.map(function(promise) {
             return promise.then(function(project) {
-                $scope.projectFetched += 1;
-                $scope.totalCommits += project.commits.length;
+                projectFetched += 1;
+                totalCommits += project.commits.length;
 
                 project.commits.map(function(commit) {
                     commit.languages.map(function(language) {
@@ -43,7 +43,7 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
                     $scope.globalSerie.data[commit.hour * 7 + commit.day][2] += 1;
 
                 });
-                $scope.chartConfig.title = getTitle($scope.totalCommits, $scope.totalProjects);
+                $scope.chartConfig.title = getTitle(totalCommits, totalProjects);
             });
         }))
     }).then(function() {

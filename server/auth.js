@@ -68,9 +68,10 @@ router.get("/callback", function(request, response) {
         })
         .then(function(result) {
             request.session.login = result.login;
-            request.session.id = result.id;
+            request.session.userId = result.id;
             request.session.name = result.name;
-            User.update({ _id: result.id }, { _id: result.id }, {upsert:true});
+            // we need the `then` clause for the action to be effective
+            User.update({ _id: result.id }, { _id: result.id }, { upsert:true }).then();
         })
         .then(function() {
             // FIXME : this doesn't redirect correctly

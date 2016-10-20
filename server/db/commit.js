@@ -9,5 +9,9 @@ module.exports = mongoose.model('Commit', new mongoose.Schema({
     },
     hour: Number,
     day: Number,
+    user: {
+        type: Number,
+        index: true
+    },
     languages: [String]
 }));

@@ -28,6 +28,7 @@ angular.module('gstats.punchcard').controller(
         $scope.selected = null;
 
         $scope.setupSerie = setupSerie;
+        $scope.findAndRemove = findAndRemove;
 
         $scope.createSerie = function(category, color, title, url) {
             return {
@@ -49,7 +50,7 @@ angular.module('gstats.punchcard').controller(
             serie.commits += 1;
         };
 
-        $scope.globalSerie = { data: $scope.setupSerie(), color: "#888" };
+        $scope.globalSerie = $scope.createSerie("global", "#888");
         $scope.otherSeries = {};
 
         $scope.reset = function() {
@@ -58,7 +59,7 @@ angular.module('gstats.punchcard').controller(
             }
 
             $scope.$broadcast("reset-selection");
-            findAndRemove($scope.chartConfig.series, $scope.selected);
+            $scope.findAndRemove($scope.chartConfig.series, $scope.selected);
             $scope.selected = null;
         };
 
@@ -67,12 +68,12 @@ angular.module('gstats.punchcard').controller(
         });
 
         $scope.$on("blur", function(event, data) {
-            findAndRemove($scope.chartConfig.series, data);
+            $scope.findAndRemove($scope.chartConfig.series, data);
         });
 
         $scope.$on("select", function(event, data) {
             if ($scope.selected !== null) {
-                findAndRemove($scope.chartConfig.series, $scope.selected);
+                $scope.findAndRemove($scope.chartConfig.series, $scope.selected);
                 $scope.selected = null;
             }
             $scope.selected = data;

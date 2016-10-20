@@ -35,13 +35,14 @@ function getLanguages(extensions, projectLanguages) {
 }
 
 
-function saveCommit(commit, languages) {
+function saveCommit(commit, languages, user) {
     var date = new Date(commit.commit.author.date);
 
     var newCommit = new Commit({
         _id: commit.sha,
         hour: date.getHours(),
         day: date.getDay(),
+        user: user,
         languages: getLanguages(getExtensions(commit.files), languages)
     });
 
@@ -63,7 +64,7 @@ function loadCommits(commits, session, user, project) {
                 return project_languages.then(function(languages) {
                     languages = Object.keys(languages);
                     return gApi(commit["url"], session, true).then(function (entry) {
-                        return saveCommit(entry, languages);
+                        return saveCommit(entry, languages, session.userId);
                     });
                 });
 
@@ -80,7 +81,18 @@ router.get("", function(request, response) {
     response.setHeader("Content-Type", "application/json");
 
     Commit.aggregate([
-        { $unwind: "$languages" },
+        { $match: { user: request.session.userId }},
+        { $group: { _id: { day: "$day", hour: "$hour" }, count: { $sum: 1 }}}
+    ]).then(function(commits) {
+            response.send(commits);
+        })
+});
+
+
+router.get("/all", function(request, response) {
+    response.setHeader("Content-Type", "application/json");
+
+    Commit.aggregate([
         { $group: {_id: { day: "$day", hour: "$hour", languages: "$languages" }, count: {$sum: 1}}}
     ]).then(function(commits) {
         response.send(commits);
