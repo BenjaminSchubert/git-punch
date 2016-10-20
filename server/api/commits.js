@@ -76,6 +76,18 @@ function loadCommits(commits, session, user, project) {
 }
 
 
+router.get("", function(request, response) {
+    response.setHeader("Content-Type", "application/json");
+
+    Commit.aggregate([
+        { $unwind: "$languages" },
+        { $group: {_id: { day: "$day", hour: "$hour", languages: "$languages" }, count: {$sum: 1}}}
+    ]).then(function(commits) {
+        response.send(commits);
+    });
+});
+
+
 router.get("/:user/:project", function(request, response) {
     var url = "repos/" + request.params.user + "/" + request.params.project + "/commits" +
         "?author=" + request.session.login + "&per_page=100";

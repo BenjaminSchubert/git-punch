@@ -7,6 +7,7 @@ require("angular-animate");
 
 require("./stats/stats.module");
 require("./about/about.module");
+require("./home/home.module");
 
 
 var githubStatsApp = angular.module("gstats", [
@@ -17,7 +18,8 @@ var githubStatsApp = angular.module("gstats", [
     // local modules
     "templates",
     "gstats.about",
-    "gstats.stats"
+    "gstats.stats",
+    "gstats.home"
 ]);
 
 
