@@ -10,7 +10,13 @@ module.exports = mongoose.model('Commit', new mongoose.Schema({
     hour: Number,
     day: Number,
     user: {
-        type: Number,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        index: true
+    },
+    project: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Project",
         index: true
     },
     languages: [String]

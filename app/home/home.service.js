@@ -24,6 +24,13 @@ app.factory('gstats.home.service', function($state, $http) {
                 .then(function(response) {
                     return response.data.count;
                 })
+        },
+
+        get projects() {
+            return $http.get("api/stats/projects")
+                .then(function(response) {
+                    return response.data.count;
+                })
         }
 
     }

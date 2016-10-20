@@ -12,6 +12,7 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
     angular.extend(this, $controller('gstats.punchcard.controller', {$scope: $scope}));
 
     var users = 0;
+    var projects = 0;
 
     $scope.personalShown = false;
 
@@ -34,8 +35,6 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
 
 
     $punchcard.commits.then(function(commits) {
-        $scope.totalCommits = commits.length;
-
         return commits.map(function(commit) {
             commit._id.languages.map(function(language) {
                 if ($scope.otherSeries.languages[language] === undefined) {
@@ -46,6 +45,7 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
             $scope.addCommit($scope.globalSerie, commit);
         });
     }).then(function() {
+        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, projects, users);
         return $http.get("/api/colors", {params: { language: Object.keys($scope.otherSeries.languages) }});
     }).then(function(request) {
         Object.keys(request.data).map(function(language) {
@@ -61,7 +61,12 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
 
     $punchcard.users.then(function(count) {
         users = count;
-        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, 0, users);
+        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, projects, users);
+    });
+
+    $punchcard.projects.then(function(count) {
+        projects = count;
+        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, projects, users);
     })
 
 }]);

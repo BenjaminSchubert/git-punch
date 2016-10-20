@@ -26,6 +26,7 @@ function setupSerie() {
 angular.module('gstats.punchcard').controller(
     'gstats.punchcard.controller', ["$scope", function PunchcardController($scope) {
         $scope.selected = null;
+        $scope.retryIn = undefined;
 
         $scope.setupSerie = setupSerie;
         $scope.findAndRemove = findAndRemove;

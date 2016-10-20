@@ -1,5 +1,6 @@
 var crypto = require("crypto");
 var http = require("request-promise");
+var mongoose = require("mongoose");
 var router = require("express").Router();
 
 var gApi = require("./utils/github-api");
@@ -68,7 +69,7 @@ router.get("/callback", function(request, response) {
         })
         .then(function(result) {
             request.session.login = result.login;
-            request.session.userId = result.id;
+            request.session.userId = mongoose.Types.ObjectId(result.id);
             request.session.name = result.name;
             // we need the `then` clause for the action to be effective
             User.update({ _id: result.id }, { _id: result.id }, { upsert:true }).then();

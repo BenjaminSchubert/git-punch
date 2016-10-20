@@ -8,7 +8,7 @@ function getTitle(commits, projects) {
 }
 
 
-angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", "$http", "$controller", "gstats.stats.service", function PunchcardController($scope, $http, $controller, $punchcard) {
+angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", "$http", "$controller", "gstats.stats.service", function PunchcardController($scope, $http, $controller, $service) {
     angular.extend(this, $controller('gstats.punchcard.controller', {$scope: $scope}));
 
     var totalCommits = 0;
@@ -18,8 +18,11 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
     $scope.otherSeries.projects = {};
     $scope.otherSeries.languages = {};
 
+    $service.projects.catch(function(error) {
+        $scope.retryIn = error.retry;
+    });
 
-    $punchcard.projects.then(function(projects) {
+    $service.commits.then(function(projects) {
         totalProjects = projects.length;
 
         return Promise.all(projects.map(function(promise) {
@@ -36,7 +39,7 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
                     });
 
                     if ($scope.otherSeries.projects[project.name] === undefined) {
-                        $scope.otherSeries.projects[project.name] = $scope.createSerie("projects", project.color, project.name, "https://github.com/" + project.fullName);
+                        $scope.otherSeries.projects[project.name] = $scope.createSerie("projects", project.color, project.name, "https://github.com/" + project.full_name);
                     }
                     $scope.addCommit($scope.otherSeries.projects[project.name], commit);
 

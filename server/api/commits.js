@@ -35,7 +35,7 @@ function getLanguages(extensions, projectLanguages) {
 }
 
 
-function saveCommit(commit, languages, user) {
+function saveCommit(commit, languages, user, project) {
     var date = new Date(commit.commit.author.date);
 
     var newCommit = new Commit({
@@ -43,6 +43,7 @@ function saveCommit(commit, languages, user) {
         hour: date.getHours(),
         day: date.getDay(),
         user: user,
+        project: project,
         languages: getLanguages(getExtensions(commit.files), languages)
     });
 
