@@ -3,6 +3,9 @@ var http = require("request-promise");
 var router = require("express").Router();
 
 var gApi = require("./utils/github-api");
+var db = require("./db/db");
+
+var User = db.User;
 
 
 const GITHUB_CLIENT = process.env["GITHUB_CLIENT"];
@@ -37,6 +40,12 @@ router.get("/login", function(request, response) {
 });
 
 
+router.get("/logout", function(request, response) {
+    request.session.destroy();
+    response.redirect(301, "/");
+});
+
+
 router.get("/callback", function(request, response) {
     if (request.query.state !== state) {
         // FIXME : error handling
@@ -55,13 +64,18 @@ router.get("/callback", function(request, response) {
     http.post({url: url, json: true })
         .then(function(res) {
             request.session.access_token = res["access_token"];
-            gApi("user", request.session).then(function(result) {
-                request.session.login = result["login"];
-
-                response.status(301).redirect(request.session.redirect || "/");
-                delete request.session.redirect;
-
-            });
+            return gApi("user", request.session);
+        })
+        .then(function(result) {
+            request.session.login = result.login;
+            request.session.id = result.id;
+            request.session.name = result.name;
+            User.update({ _id: result.id }, { _id: result.id }, {upsert:true});
+        })
+        .then(function() {
+            // FIXME : this doesn't redirect correctly
+            response.status(301).redirect(request.session.redirect || "/");
+            delete request.session.redirect;
         });
 });
 

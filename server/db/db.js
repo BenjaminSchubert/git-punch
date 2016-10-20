@@ -13,5 +13,6 @@ mongoose.connect(MONGODB);
 
 
 module.exports = {
-    Commit: require("./commit")
+    Commit: require("./commit"),
+    User: require("./user")
 };
