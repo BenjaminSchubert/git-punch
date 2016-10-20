@@ -9,7 +9,7 @@ angular.module("gstats.home", ["gstats.punchcard"])
     .config(function ($stateProvider) {
         $stateProvider.state({
             name: 'home',
-            url: '/home',
+            url: '/',
             component: "gstats.home.component"
         });
     });
