@@ -34,7 +34,6 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
         stats.repositories.map(function(repository) {
             var name;
             if (duplicateNames.find(function(repo) { return repo === repository.name; })) {
-                console.log(repository);
                 name = repository.full_name;
             } else {
                 name = repository.name;
@@ -60,7 +59,7 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
 
         $scope.chartConfig.title = getTitle(totalCommits, totalRepositories);
 
-
+        $scope.chartConfig.loading = false;
     }).then(function() {
         return $http.get("/api/colors", {params: { language: Object.keys($scope.otherSeries.languages) }});
     }).then(function(request) {

@@ -46,6 +46,7 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
         });
     }).then(function() {
         $scope.chartConfig.title = getTitle($scope.globalSerie.commits, projects, users);
+        $scope.chartConfig.loading = false;
         return $http.get("/api/colors", {params: { language: Object.keys($scope.otherSeries.languages) }});
     }).then(function(request) {
         Object.keys(request.data).map(function(language) {

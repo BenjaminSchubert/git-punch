@@ -115,6 +115,7 @@ angular.module('gstats.punchcard').controller(
                 }
             },
             title: $scope.getTitle(),
+            loading: true,
 
             xAxis: {
                 minorGridLineDashStyle: 'dash',
