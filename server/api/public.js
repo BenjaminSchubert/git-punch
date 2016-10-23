@@ -1,5 +1,7 @@
 var router = require("express").Router();
+
 var db = require("../db/db");
+var linguist = require("../utils/linguist");
 
 var Commit = db.Commit;
 var Repository = db.Repository;
@@ -25,21 +27,38 @@ router.get("/repositories", function(request, response) {
 
 
 router.get("/commits", function(request, response) {
-    // FIXME : check that the count is correct
-    // FIXME : repository to not have _id anymore
-    Commit
-        .aggregate([
-            { $group: {
-                _id: "$sha",
-                day: { "$first": "$day" },
-                hour: { "$first": "$hour" },
-                languages: { "$first": "$languages" },
-                shas: { $addToSet: "$sha" }
-            }},
-            { $project: { day: 1, hour: 1, languages: 1, count: { $size: "$shas" }, _id: 0 } }
-        ])
-        .then(function(commits) {
-            response.send({ commits: commits });
+    Promise.all([
+        Commit
+            .aggregate([
+                { $group: {
+                    _id: "$sha",
+                    day: { "$first": "$day" },
+                    hour: { "$first": "$hour" },
+                    languages: { "$first": "$languages" },
+                    shas: { $addToSet: "$sha" }
+                }},
+                { $project: { day: 1, hour: 1, languages: 1, count: { $size: "$shas" }, _id: 0 } }
+            ]),
+        Commit
+            .aggregate([
+                { $unwind: "$languages" },
+                { $group: {
+                    _id: null,
+                    languages: { $addToSet: "$languages" }
+                }},
+                { $project: { languages: 1, _id: 0 }}
+            ])
+            .then(function(data) {
+                return data[0].languages.map(function(language) {
+                    return {
+                        language: language,
+                        color: linguist.color(language)
+                    }
+                });
+            })
+    ])
+        .then(function(data) {
+            response.send({ commits: data[0], languages: data[1] });
         });
 });
 

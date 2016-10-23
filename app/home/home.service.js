@@ -8,10 +8,10 @@ const PRIVATE_API = "api/private/";
 
 app.factory('gstats.home.service', function($state, $http) {
     return {
-        get commits() {
+        get commitsInfo() {
             return $http.get(PUBLIC_API + "commits")
                 .then(function(commits) {
-                    return commits.data.commits;
+                    return commits.data;
                 });
         },
 

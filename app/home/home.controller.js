@@ -50,30 +50,27 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
     };
 
 
-    $service.commits
-        .then(function(commits) {
-            return commits.map(function(commit) {
+    $service.commitsInfo
+        .then(function(commitsInfo) {
+            commitsInfo.languages.forEach(function(language) {
+                $scope.otherSeries.languages[language.language] =
+                    $scope.createSerie("languages", language.color, language.language, language.language);
+            });
+
+            commitsInfo.commits.forEach(function(commit) {
                 commit.languages.map(function(language) {
-                    if ($scope.otherSeries.languages[language] === undefined) {
-                        $scope.otherSeries.languages[language] = $scope.createSerie("languages", "#333", language, language);
-                    }
                     $scope.addCommit($scope.otherSeries.languages[language], commit);
                 });
                 $scope.addCommit($scope.globalSerie, commit);
             });
-        }).then(function() {
-            $scope.chartConfig.title = getTitle($scope.globalSerie.commits, repositories, users);
+
             $scope.chartConfig.loading = false;
-            return $http.get("/api/colors", {params: { language: Object.keys($scope.otherSeries.languages) }});
-        }).then(function(request) {
-            Object.keys(request.data).map(function(language) {
-                $scope.otherSeries.languages[language].color = request.data[language];
-            })
+            $scope.chartConfig.title = getTitle($scope.globalSerie.commits, repositories, users);
         });
 
     $service.userCommits
         .then(function(commits) {
-            return commits.map(function(commit) {
+            commits.forEach(function(commit) {
                 $scope.addCommit($scope.personalSerie, commit);
             })
         })
