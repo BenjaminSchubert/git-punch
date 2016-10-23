@@ -50,14 +50,14 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
     };
 
 
-    $service.commitsInfo
-        .then(function(commitsInfo) {
-            commitsInfo.languages.forEach(function(language) {
+    $service.stats
+        .then(function(stats) {
+            stats.languages.forEach(function(language) {
                 $scope.otherSeries.languages[language.language] =
-                    $scope.createSerie("languages", language.color, language.language, language.language);
+                    $scope.createSerie("languages", language.color || "#333", language.language, language.language);
             });
 
-            commitsInfo.commits.forEach(function(commit) {
+            stats.commits.forEach(function(commit) {
                 commit.languages.map(function(language) {
                     $scope.addCommit($scope.otherSeries.languages[language], commit);
                 });

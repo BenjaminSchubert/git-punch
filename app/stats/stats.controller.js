@@ -52,11 +52,13 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
                 $scope.otherSeries.repositories[repository._id] = $scope.createSerie("repositories", repository.color, repository._id, name, "https://github.com/" + repository.full_name);
             });
 
+            stats.languages.forEach(function(language) {
+                $scope.otherSeries.languages[language.language] =
+                    $scope.createSerie("languages", language.color || "#333", language.language, language.language);
+            });
+
             stats.commits.map(function(commit) {
                 commit.languages.map(function(language) {
-                     if ($scope.otherSeries.languages[language] === undefined) {
-                        $scope.otherSeries.languages[language] = $scope.createSerie("languages", "#333", language, language);
-                    }
                     $scope.addCommit($scope.otherSeries.languages[language], commit);
                 });
 
@@ -70,14 +72,6 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
             $scope.chartConfig.title = getTitle(totalCommits, totalRepositories);
 
             $scope.chartConfig.loading = false;
-        })
-        .then(function() {
-            return $http.get("/api/colors", {params: { language: Object.keys($scope.otherSeries.languages) }});
-        })
-        .then(function(request) {
-            Object.keys(request.data).map(function(language) {
-                $scope.otherSeries.languages[language].color = request.data[language];
-            })
         })
         .catch(function(error) {
             if (error.status === 403) {

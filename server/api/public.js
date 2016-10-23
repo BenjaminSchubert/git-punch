@@ -2,6 +2,7 @@ var router = require("express").Router();
 
 var db = require("../db/db");
 var linguist = require("../utils/linguist");
+var utils = require("./utils");
 
 var Commit = db.Commit;
 var Repository = db.Repository;
@@ -39,23 +40,7 @@ router.get("/commits", function(request, response) {
                 }},
                 { $project: { day: 1, hour: 1, languages: 1, count: { $size: "$shas" }, _id: 0 } }
             ]),
-        Commit
-            .aggregate([
-                { $unwind: "$languages" },
-                { $group: {
-                    _id: null,
-                    languages: { $addToSet: "$languages" }
-                }},
-                { $project: { languages: 1, _id: 0 }}
-            ])
-            .then(function(data) {
-                return data[0].languages.map(function(language) {
-                    return {
-                        language: language,
-                        color: linguist.color(language)
-                    }
-                });
-            })
+        utils.getLanguages()
     ])
         .then(function(data) {
             response.send({ commits: data[0], languages: data[1] });

@@ -3,6 +3,7 @@ var router = require("express").Router();
 var ghApi = require("../utils/github-api");
 var linguist = require("../utils/linguist");
 var db = require("../db/db");
+var utils = require("./utils");
 
 var Commit = db.Commit;
 var Repository = db.Repository;
@@ -241,11 +242,15 @@ router.get("/repositories", function(request, response) {
                     return saveCommits(request.session, repository);
                 }))
                 .then(function() {
-                    return getCommits(request.session);
+                    return Promise.all([
+                        getCommits(request.session),
+                        utils.getLanguages(request.session)
+                    ])
                 })
-                .then(function(commits) {
+                .then(function(data) {
                     return {
-                        commits: commits,
+                        commits: data[0],
+                        languages: data[1],
                         repositories: repositories
                     }
                 })

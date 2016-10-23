@@ -36,7 +36,6 @@ router.use(function(request, response, next) {
 
 router.use("/private", require("./private"));
 router.use("/public", require("./public"));
-router.use("/colors", require("./colors"));
 
 
 module.exports = router;
