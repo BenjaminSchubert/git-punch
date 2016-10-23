@@ -1,6 +1,6 @@
-<div class="row" ng-if="retryIn !== undefined">
+<div class="row" ng-if="limitedUntil !== undefined">
     <div class="alert alert-danger" role="alert">
-        Maximum requests exceeded. Please retry after {{ retryIn | date:'yyyy-MM-dd HH:mm:ss' }} (We cache results, so if you can't download everything at once, we're sorry. It will hopefully work next time !)
+        Maximum requests exceeded. Please retry after {{ limitedUntil | date:'HH:mm' }} (We cache results, so if you can't download everything at once, we're sorry. It will hopefully work next time !)
     </div>
 </div>
 

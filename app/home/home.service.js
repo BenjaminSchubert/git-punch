@@ -11,15 +11,8 @@ app.factory('gstats.home.service', function($state, $http) {
         get commits() {
             return $http.get(PUBLIC_API + "commits")
                 .then(function(commits) {
-                    return commits.data;
+                    return commits.data.commits;
                 });
-        },
-
-        get userCommits() {
-            return $http.get(PRIVATE_API + "commits")
-                .then(function(commits) {
-                    return commits.data;
-                })
         },
 
         get users() {
@@ -33,6 +26,22 @@ app.factory('gstats.home.service', function($state, $http) {
             return $http.get(PUBLIC_API + "repositories")
                 .then(function(response) {
                     return response.data.count;
+                })
+        },
+
+        get userCommits() {
+            return $http.get(PRIVATE_API + "commits")
+                .then(function(commits) {
+                    return commits.data.commits;
+                })
+                .catch(function(error) {
+                    if (error.status === 403) {
+                        return Promise.reject({
+                            message: error.data.error,
+                            limitedUntil: error.data.limitedUntil
+                        });
+                    }
+                    return Promise.reject(error);
                 })
         }
 

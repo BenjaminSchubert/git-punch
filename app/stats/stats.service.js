@@ -8,15 +8,10 @@ app.factory('gstats.stats.service', function($state, $http) {
         get repositories() {
             return $http.get("api/private/repositories")
                 .then(function(response) {
-                    if (response.data.retry !== undefined) {
-                        return Promise.reject({retry: response.data.retry, repositories: response.data.repositories});
+                    if (response.data.limitedUntil !== undefined) {
+                        return Promise.reject({ limitedUntil: response.data.limitedUntil, data: response.data });
                     }
                     return response.data;
-                })
-                .catch(function() {
-                    // FIXME : a better handling would be... better
-                    window.location.href = "/auth/login";
-                    return [];
                 });
         }
     }

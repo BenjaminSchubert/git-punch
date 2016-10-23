@@ -11,16 +11,14 @@ function _fetchApi(path, session, acc) {
         }
     }
 
-    return http.get(
-        {
+    return http.get({
             url: path,
             headers: {
                 Authorization: "token " + session.access_token,
                 "User-Agent": "Github-Stats"
             },
             resolveWithFullResponse: true
-        }
-    )
+    })
         .then(function(data) {
             var links = link(data.headers.link);
             var body = JSON.parse(data.body);
@@ -43,7 +41,7 @@ function _fetchApi(path, session, acc) {
                     error.body = acc;
                 }
             }
-            throw error;
+            return Promise.reject(error);
         })
 }
 

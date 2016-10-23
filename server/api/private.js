@@ -66,10 +66,10 @@ function saveMissingCommits(commits, commitsInDB, session, repository) {
             return Commit.collection.insert(commits);
         })
         .catch(function(err) {
-            err.writeErrors.map(function(e) {
-                console.log(e.toString())
-            });
-            return [];
+            if (err.rateLimit === true) {
+                return [];
+            }
+            throw err;
         })
 }
 
@@ -89,14 +89,12 @@ function saveCommits(session, repository) {
                 })
         })
         .catch(function(err) {
-            if (err.response === undefined) {
-                console.log(err);
-            }
             // we are limited by GitHub API, let's just use local content
-            if (err.response.statusCode === 403 && err.response.headers["x-ratelimit-remaining"] === "0") {
+            if (err.rateLimit === true) {
+                // we are limited by GitHub API, let's just use local content
                 return;
             }
-            else if (err.response.statusCode == 409) {
+            else if (err.response !== undefined && err.response.statusCode == 409) {
                 // repository is empty
                 return;
             }
@@ -152,16 +150,23 @@ function getRepositories(session) {
             }))
         })
         .catch(function(err) {
-                if (err.statusCode === 403 && err.response.headers["x-ratelimit-remaining"] === "0") {
-                    return Commit
-                        .find({"user": session.userId})
-                        .distinct("repository")
-                        .then(function(repositories) {
-                            return Repository.find({"_id": { "$in": repositories } }, "-__v");
-                        });
-                }
-                throw err;
-            })
+            if (err.rateLimit === true) {
+                // we are limited by GitHub
+                return Commit
+                    .find({"user": session.userId})
+                    .distinct("repository")
+                    .then(function(repositories) {
+                        return Repository.find({"_id": { "$in": repositories } }, "-__v");
+                    })
+                    .then(function(repositories) {
+                        return Promise.reject({
+                            data: repositories,
+                            rateLimit: true
+                        })
+                    });
+            }
+            return Promise.reject(err);
+        })
 }
 
 
@@ -172,12 +177,35 @@ router.use(function(request, response, next) {
         return;
     }
 
+    var unCheckedSend = response.send.bind(response);
+
+    response.send = function(data) {
+        if (request.session.ghRateLimitReset !== undefined) {
+            if (new Date(request.session.ghRateLimitReset) > new Date()) {
+                data.limitedUntil = request.session.ghRateLimitReset;
+            } else {
+                delete request.session.ghRateLimitReset;
+            }
+        }
+        unCheckedSend(data);
+    };
+
     next();
 });
 
 
+router.use(function(request, response, next) {
+    if (request.session.userId === undefined) {
+        response.status(403).send({ error: "User information couldn't be retrieved from GitHub, we can't know who you are." });
+    } else {
+        next();
+    }
+});
+
+
+
 router.get("/user", function(request, response) {
-   response.send({ name: request.session.name });
+    response.send({ name: request.session.name });
 });
 
 
@@ -195,13 +223,19 @@ router.get("/commits", function(request, response) {
             { $project: { "day": 1, "hour": 1, "languages": 1, "count": 1, "_id": 0 } }
         ])
         .then(function(commits) {
-            response.send(commits);
+            response.send({ commits: commits});
         })
 });
 
 
 router.get("/repositories", function(request, response) {
     getRepositories(request.session)
+        .catch(function(err) {
+            if (err.rateLimit === true) {
+                return err.data;
+            }
+            return Promise.reject(err);
+        })
         .then(function(repositories) {
             return Promise.all(repositories.map(function(repository) {
                     return saveCommits(request.session, repository);

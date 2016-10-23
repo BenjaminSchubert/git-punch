@@ -8,7 +8,7 @@ function getTitle(commits, repositories, users) {
 }
 
 
-angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$http", "$controller", "gstats.home.service", function PunchcardController($scope, $http, $controller, $punchcard) {
+angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$http", "$controller", "gstats.home.service", function PunchcardController($scope, $http, $controller, $service) {
     angular.extend(this, $controller('gstats.punchcard.controller', {$scope: $scope}));
 
     var users = 0;
@@ -50,40 +50,52 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
     };
 
 
-    $punchcard.commits.then(function(commits) {
-        return commits.map(function(commit) {
-            commit.languages.map(function(language) {
-                if ($scope.otherSeries.languages[language] === undefined) {
-                    $scope.otherSeries.languages[language] = $scope.createSerie("languages", "#333", language, language);
-                }
-                $scope.addCommit($scope.otherSeries.languages[language], commit);
+    $service.commits
+        .then(function(commits) {
+            return commits.map(function(commit) {
+                commit.languages.map(function(language) {
+                    if ($scope.otherSeries.languages[language] === undefined) {
+                        $scope.otherSeries.languages[language] = $scope.createSerie("languages", "#333", language, language);
+                    }
+                    $scope.addCommit($scope.otherSeries.languages[language], commit);
+                });
+                $scope.addCommit($scope.globalSerie, commit);
             });
-            $scope.addCommit($scope.globalSerie, commit);
+        }).then(function() {
+            $scope.chartConfig.title = getTitle($scope.globalSerie.commits, repositories, users);
+            $scope.chartConfig.loading = false;
+            return $http.get("/api/colors", {params: { language: Object.keys($scope.otherSeries.languages) }});
+        }).then(function(request) {
+            Object.keys(request.data).map(function(language) {
+                $scope.otherSeries.languages[language].color = request.data[language];
+            })
         });
-    }).then(function() {
-        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, repositories, users);
-        $scope.chartConfig.loading = false;
-        return $http.get("/api/colors", {params: { language: Object.keys($scope.otherSeries.languages) }});
-    }).then(function(request) {
-        Object.keys(request.data).map(function(language) {
-            $scope.otherSeries.languages[language].color = request.data[language];
+
+    $service.userCommits
+        .then(function(commits) {
+            return commits.map(function(commit) {
+                $scope.addCommit($scope.personalSerie, commit);
+            })
         })
-    });
+        .catch(function(error) {
+            if (error.message !== undefined) {
+                $scope.errorMessage = error.message;
+                $scope.limitedUntil = error.limitedUntil;
+            } else {
+                return Promise.reject(error);
+            }
+        });
 
-    $punchcard.userCommits.then(function(commits) {
-        return commits.map(function(commit) {
-            $scope.addCommit($scope.personalSerie, commit);
+    $service.users
+        .then(function(count) {
+            users = count;
+            $scope.chartConfig.title = getTitle($scope.globalSerie.commits, repositories, users);
+        });
+
+    $service.repositories
+        .then(function(count) {
+            repositories = count;
+            $scope.chartConfig.title = getTitle($scope.globalSerie.commits, repositories, users);
         })
-    });
-
-    $punchcard.users.then(function(count) {
-        users = count;
-        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, repositories, users);
-    });
-
-    $punchcard.repositories.then(function(count) {
-        repositories = count;
-        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, repositories, users);
-    })
 
 }]);

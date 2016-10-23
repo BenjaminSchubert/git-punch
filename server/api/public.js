@@ -10,7 +10,7 @@ router.get("/users", function(request, response) {
     User
         .count()
         .then(function(users) {
-            response.send(JSON.stringify({ count: users }));
+            response.send({ count: users });
         });
 });
 
@@ -39,7 +39,7 @@ router.get("/commits", function(request, response) {
             { $project: { day: 1, hour: 1, languages: 1, count: { $size: "$shas" }, _id: 0 } }
         ])
         .then(function(commits) {
-            response.send(commits);
+            response.send({ commits: commits });
         });
 });
 
