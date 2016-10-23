@@ -5,7 +5,7 @@ var linguist = require("../utils/linguist");
 var db = require("../db/db");
 
 var Commit = db.Commit;
-var Project = db.Project;
+var Repository = db.Repository;
 
 
 function getExtensions(files) {
@@ -17,7 +17,7 @@ function getExtensions(files) {
 }
 
 
-function getLanguages(extensions, projectLanguages) {
+function getLanguages(extensions, repositoryLanguages) {
     return extensions.map(function(extension) {
         var languages = linguist.languages("." + extension);
 
@@ -26,7 +26,7 @@ function getLanguages(extensions, projectLanguages) {
         } else if (languages.length === 1) {
             return languages[0];
         } else {
-            return projectLanguages.filter(function(entry) {
+            return repositoryLanguages.filter(function(entry) {
                 return languages.indexOf(entry) !== -1;
             })[0] || "Other";
         }
@@ -36,10 +36,10 @@ function getLanguages(extensions, projectLanguages) {
 }
 
 
-function saveMissingCommits(commits, commitsInDB, session, project) {
+function saveMissingCommits(commits, commitsInDB, session, repository) {
     var newCommits = commits
         .filter(function(commit) {
-            return !commitsInDB.find(function(commitInDB) { return commit.sha === commitInDB.sha && project._id == commitInDB.project; });
+            return !commitsInDB.find(function(commitInDB) { return commit.sha === commitInDB.sha && repository._id == commitInDB.repository; });
         });
 
     if (newCommits.length == 0) {
@@ -57,8 +57,8 @@ function saveMissingCommits(commits, commitsInDB, session, project) {
                         hour: date.getHours(),
                         day: date.getDay(),
                         user: session.userId,
-                        project: project._id,
-                        languages: getLanguages(getExtensions(commit.files), project.languages)
+                        repository: repository._id,
+                        languages: getLanguages(getExtensions(commit.files), repository.languages)
                     }
                 })
         }))
@@ -66,7 +66,6 @@ function saveMissingCommits(commits, commitsInDB, session, project) {
             return Commit.collection.insert(commits);
         })
         .catch(function(err) {
-            console.log("Projects", project);
             err.writeErrors.map(function(e) {
                 console.log(e.toString())
             });
@@ -75,18 +74,18 @@ function saveMissingCommits(commits, commitsInDB, session, project) {
 }
 
 
-function saveCommits(session, project) {
-    return ghApi("https://api.github.com/repos/" + project.full_name + "/commits?author=" + session.login, session, true)
+function saveCommits(session, repository) {
+    return ghApi("https://api.github.com/repos/" + repository.full_name + "/commits?author=" + session.login, session, true)
         // check for missing commits
         .then(function(commits) {
             return Commit
                 .find({
                     "sha": { "$in": commits.map(function(commit) { return commit.sha; })},
-                    "project": project._id,
+                    "repository": repository._id,
                     "user": session.userId
                 })
                 .then(function(commitsInDB) {
-                    return saveMissingCommits(commits, commitsInDB, session, project)
+                    return saveMissingCommits(commits, commitsInDB, session, repository)
                 })
         })
         .catch(function(err) {
@@ -115,10 +114,10 @@ function getCommits(session) {
                 hour: { "$first": "$hour" },
                 day: { "$first": "$day" },
                 languages: { "$first": "$languages" },
-                projects: { $push: "$project" }
+                repositories: { $push: "$repository" }
             }
         },
-        { $project: { "day": 1, "hour": 1, "languages": 1, "projects": 1, "_id": 0 } }
+        { $project: { "day": 1, "hour": 1, "languages": 1, "repositories": 1, "_id": 0 } }
     ])
 }
 
@@ -129,7 +128,7 @@ function saveRepository(repository, session) {
             return Object.keys(languages);
         })
         .then(function(languages) {
-            return Project.findOneAndUpdate(
+            return Repository.findOneAndUpdate(
                 { "_id": repository.id },
                 {
                     "_id": repository.id,
@@ -156,9 +155,9 @@ function getRepositories(session) {
                 if (err.statusCode === 403 && err.response.headers["x-ratelimit-remaining"] === "0") {
                     return Commit
                         .find({"user": session.userId})
-                        .distinct("project")
+                        .distinct("repository")
                         .then(function(repositories) {
-                            return Project.find({"_id": { "$in": repositories } }, "-__v");
+                            return Repository.find({"_id": { "$in": repositories } }, "-__v");
                         });
                 }
                 throw err;
@@ -166,12 +165,19 @@ function getRepositories(session) {
 }
 
 
+router.use(function(request, response, next) {
+    if (request.session.access_token === undefined) {
+        // FIXME : a correct redirect ?
+        response.status(401).send({url: "/auth/login"});
+        return;
+    }
+
+    next();
+});
+
+
 router.get("/user", function(request, response) {
-   if (request.session.access_token) {
-       response.send({ name: request.session.name });
-   } else {
-       response.status(401).send();
-   }
+   response.send({ name: request.session.name });
 });
 
 
@@ -194,7 +200,7 @@ router.get("/commits", function(request, response) {
 });
 
 
-router.get("/projects", function(request, response) {
+router.get("/repositories", function(request, response) {
     getRepositories(request.session)
         .then(function(repositories) {
             return Promise.all(repositories.map(function(repository) {
@@ -211,16 +217,7 @@ router.get("/projects", function(request, response) {
                 })
         })
         .then(function(data) {
-            response.setHeader("Content-Type", "application/json");
             response.send(data);
-        })
-        .catch(function(err) {
-            if (err.statusCode === 401) {
-                request.session.redirect = "/#/punchcard";
-                response.status(401).send({url: "/auth/login"});
-            } else {
-                throw err;
-            }
         })
 });
 

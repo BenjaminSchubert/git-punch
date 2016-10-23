@@ -1,9 +1,9 @@
 var angular = require("angular");
 
 
-function getTitle(commits, projects, users) {
+function getTitle(commits, repositories, users) {
     return {
-        text: 'Commit Statistics on ' + commits + " commits accross " + projects + " projects by " + users + " users."
+        text: 'Commit Statistics on ' + commits + " commits accross " + repositories + " repositories by " + users + " users."
     }
 }
 
@@ -12,7 +12,7 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
     angular.extend(this, $controller('gstats.punchcard.controller', {$scope: $scope}));
 
     var users = 0;
-    var projects = 0;
+    var repositories = 0;
 
     $scope.personalShown = false;
 
@@ -45,7 +45,7 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
             $scope.addCommit($scope.globalSerie, commit);
         });
     }).then(function() {
-        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, projects, users);
+        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, repositories, users);
         $scope.chartConfig.loading = false;
         return $http.get("/api/colors", {params: { language: Object.keys($scope.otherSeries.languages) }});
     }).then(function(request) {
@@ -62,12 +62,12 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
 
     $punchcard.users.then(function(count) {
         users = count;
-        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, projects, users);
+        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, repositories, users);
     });
 
-    $punchcard.projects.then(function(count) {
-        projects = count;
-        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, projects, users);
+    $punchcard.repositories.then(function(count) {
+        repositories = count;
+        $scope.chartConfig.title = getTitle($scope.globalSerie.commits, repositories, users);
     })
 
 }]);

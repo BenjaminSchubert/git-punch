@@ -14,6 +14,6 @@ mongoose.connect(MONGODB);
 
 module.exports = {
     Commit: require("./commit"),
-    Project: require("./project"),
+    Repository: require("./repository"),
     User: require("./user")
 };

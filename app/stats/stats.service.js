@@ -5,11 +5,11 @@ var app = angular.module('gstats.stats');
 
 app.factory('gstats.stats.service', function($state, $http) {
     return {
-        get projects() {
-            return $http.get("api/private/projects")
+        get repositories() {
+            return $http.get("api/private/repositories")
                 .then(function(response) {
                     if (response.data.retry !== undefined) {
-                        return Promise.reject({retry: response.data.retry, projects: response.data.projects});
+                        return Promise.reject({retry: response.data.retry, repositories: response.data.repositories});
                     }
                     return response.data;
                 })

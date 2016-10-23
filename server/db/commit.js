@@ -12,7 +12,7 @@ var schema = new mongoose.Schema({
         type: Number,
         index: true
     },
-    project: {
+    repository: {
         type: Number,
         index: true
     },
@@ -20,6 +20,6 @@ var schema = new mongoose.Schema({
 });
 
 
-schema.index({ "sha": 1, "project": 1 }, { unique: true});
+schema.index({ "sha": 1, "repository": 1 }, { unique: true});
 
 module.exports = mongoose.model('Commit', schema);

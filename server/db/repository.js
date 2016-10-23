@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 
-module.exports = mongoose.model('Project', new mongoose.Schema({
+module.exports = mongoose.model('Repository', new mongoose.Schema({
     _id: {
         type: Number,
         index: true,

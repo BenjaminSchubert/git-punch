@@ -29,8 +29,8 @@ app.factory('gstats.home.service', function($state, $http) {
                 })
         },
 
-        get projects() {
-            return $http.get(PUBLIC_API + "projects")
+        get repositories() {
+            return $http.get(PUBLIC_API + "repositories")
                 .then(function(response) {
                     return response.data.count;
                 })

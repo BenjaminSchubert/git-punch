@@ -1,9 +1,9 @@
 var angular = require("angular");
 
 
-function getTitle(commits, projects) {
+function getTitle(commits, repositories) {
     return {
-        text: 'Commit Statistics from ' + commits + " commits accross " + projects + " projects."
+        text: 'Commit Statistics from ' + commits + " commits accross " + repositories + " repositories."
     }
 }
 
@@ -14,10 +14,10 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
     var totalCommits = 0;
     var totalRepositories = 1;
 
-    $scope.otherSeries.projects = {};
+    $scope.otherSeries.repositories = {};
     $scope.otherSeries.languages = {};
 
-    $service.projects.then(function(stats) {
+    $service.repositories.then(function(stats) {
         totalRepositories = stats.repositories.length;
         totalCommits = stats.commits.length;
 
@@ -39,7 +39,7 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
                 name = repository.name;
             }
 
-            $scope.otherSeries.projects[repository._id] = $scope.createSerie("projects", repository.color, repository._id, name, "https://github.com" + repository.full_name);
+            $scope.otherSeries.repositories[repository._id] = $scope.createSerie("repositories", repository.color, repository._id, name, "https://github.com" + repository.full_name);
         });
 
         stats.commits.map(function(commit) {
@@ -50,8 +50,8 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
                 $scope.addCommit($scope.otherSeries.languages[language], commit);
             });
 
-            commit.projects.map(function(project) {
-                $scope.addCommit($scope.otherSeries.projects[project], commit);
+            commit.repositories.map(function(repository) {
+                $scope.addCommit($scope.otherSeries.repositories[repository], commit);
             });
 
             $scope.globalSerie.data[commit.hour * 7 + commit.day][2] += 1;

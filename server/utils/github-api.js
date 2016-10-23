@@ -3,6 +3,14 @@ var link = require("parse-link-header");
 
 
 function _fetchApi(path, session, acc) {
+    if (session.ghRateLimitReset) {
+        if (new Date(session.ghRateLimitReset) > new Date()) {
+            return Promise.reject({ rateLimit: true, body: acc });
+        } else {
+            delete session.ghRateLimitReset;
+        }
+    }
+
     return http.get(
         {
             url: path,
@@ -29,8 +37,11 @@ function _fetchApi(path, session, acc) {
         })
         .catch(function(error) {
             if (error.response.statusCode === 403 && error.response.headers["x-ratelimit-remaining"] === "0") {
-                session.retryIn = error.response.headers["X-RateLimit-Reset"] * 1000;
+                session.ghRateLimitReset = error.response.headers["x-ratelimit-reset"] * 1000;
                 error.rateLimit = true;
+                if (acc !== undefined) {
+                    error.body = acc;
+                }
             }
             throw error;
         })
