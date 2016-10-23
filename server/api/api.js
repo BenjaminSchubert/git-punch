@@ -27,8 +27,7 @@ router.use(function(request, response, next) {
                     // do nothing, this will be handled if needed by children
                     next();
                 } else {
-                    console.log(Object.keys(err));
-                    console.log("OH", err);
+                    return Promise.reject(error);
                 }
             });
     }
