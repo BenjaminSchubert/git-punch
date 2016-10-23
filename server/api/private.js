@@ -40,7 +40,7 @@ function getLanguages(extensions, repositoryLanguages) {
 function saveMissingCommits(commits, commitsInDB, session, repository) {
     var newCommits = commits
         .filter(function(commit) {
-            return !commitsInDB.find(function(commitInDB) { return commit.sha === commitInDB.sha && repository._id == commitInDB.repository; });
+            return !commitsInDB.find(function(commitInDB) { return commit.sha === commitInDB.sha && repository.id == commitInDB.repository; });
         });
 
     if (newCommits.length == 0) {
@@ -58,7 +58,7 @@ function saveMissingCommits(commits, commitsInDB, session, repository) {
                         hour: date.getHours(),
                         day: date.getDay(),
                         user: session.userId,
-                        repository: repository._id,
+                        repository: repository.id,
                         languages: getLanguages(getExtensions(commit.files), repository.languages)
                     }
                 })
@@ -82,7 +82,7 @@ function saveCommits(session, repository) {
             return Commit
                 .find({
                     "sha": { "$in": commits.map(function(commit) { return commit.sha; })},
-                    "repository": repository._id,
+                    "repository": repository.id,
                     "user": session.userId
                 })
                 .then(function(commitsInDB) {
@@ -99,7 +99,7 @@ function saveCommits(session, repository) {
                 // repository is empty
                 return;
             }
-            throw err;
+            return Promise.reject(err);
         })
 }
 
@@ -128,15 +128,16 @@ function saveRepository(repository, session) {
         })
         .then(function(languages) {
             return Repository.findOneAndUpdate(
-                { "_id": repository.id },
+                { "id": repository.id },
                 {
-                    "_id": repository.id,
+                    "id": repository.id,
                     "name": repository.name,
                     "full_name": repository.full_name,
+                    "user": session.userId,
                     "color": linguist.color(repository.language) || "#333",
                     "languages": languages
                 },
-                { upsert: true, new: true, fields: "-__v" }
+                { upsert: true, new: true, fields: "-__v -_id -user" }
             );
 
         });
@@ -157,7 +158,7 @@ function getRepositories(session) {
                     .find({"user": session.userId})
                     .distinct("repository")
                     .then(function(repositories) {
-                        return Repository.find({"_id": { "$in": repositories } }, "-__v");
+                        return Repository.find({"id": { "$in": repositories } }, "-__v -_id");
                     })
                     .then(function(repositories) {
                         return Promise.reject({

@@ -21,6 +21,10 @@ function getLanguages(session) {
     return Commit
         .aggregate(pipeline)
         .then(function(data) {
+            if (data.length === 0) {
+                return [];
+            }
+
             return data[0].languages.map(function(language) {
                 return {
                     language: language,

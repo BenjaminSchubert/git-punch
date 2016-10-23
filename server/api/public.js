@@ -20,6 +20,7 @@ router.get("/users", function(request, response) {
 
 router.get("/repositories", function(request, response) {
     Repository
+        .distinct("id")
         .count()
         .then(function(repositories) {
             response.send({ count: repositories });

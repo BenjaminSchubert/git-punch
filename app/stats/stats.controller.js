@@ -18,7 +18,6 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
     $scope.otherSeries.languages = {};
     $scope.limitedUntil = undefined;
 
-
     $service.repositories
         .catch(function(error) {
             if (error.limitedUntil !== undefined) {
@@ -49,7 +48,7 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
                     name = repository.name;
                 }
 
-                $scope.otherSeries.repositories[repository._id] = $scope.createSerie("repositories", repository.color, repository._id, name, "https://github.com/" + repository.full_name);
+                $scope.otherSeries.repositories[repository.id] = $scope.createSerie("repositories", repository.color, repository.id, name, "https://github.com/" + repository.full_name);
             });
 
             stats.languages.forEach(function(language) {

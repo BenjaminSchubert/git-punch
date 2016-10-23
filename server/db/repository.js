@@ -1,11 +1,14 @@
 var mongoose = require('mongoose');
 
 
-module.exports = mongoose.model('Repository', new mongoose.Schema({
-    _id: {
+var schema = new mongoose.Schema({
+    id: {
         type: Number,
-        index: true,
-        unique: true
+        index: true
+    },
+    user: {
+        type: Number,
+        index: true
     },
     name: {
         type: String
@@ -17,4 +20,8 @@ module.exports = mongoose.model('Repository', new mongoose.Schema({
         type: String
     },
     languages: [String]
-}));
+});
+
+schema.index({ "id": 1, "user": 1 }, { unique: true });
+
+module.exports = mongoose.model('Repository', schema);

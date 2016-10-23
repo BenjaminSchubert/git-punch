@@ -11,14 +11,25 @@ function _fetchApi(path, session, acc) {
         }
     }
 
-    return http.get({
+    return http
+        .get({
             url: path,
             headers: {
                 Authorization: "token " + session.access_token,
                 "User-Agent": "Github-Stats"
             },
             resolveWithFullResponse: true
-    })
+        })
+        .catch(function(error) {
+            if (error.response.statusCode === 403 && error.response.headers["x-ratelimit-remaining"] === "0") {
+                session.ghRateLimitReset = error.response.headers["x-ratelimit-reset"] * 1000;
+                error.rateLimit = true;
+                if (acc !== undefined) {
+                    error.body = acc;
+                }
+            }
+            return Promise.reject(error);
+        })
         .then(function(data) {
             var links = link(data.headers.link);
             var body = JSON.parse(data.body);
@@ -32,17 +43,7 @@ function _fetchApi(path, session, acc) {
             } else {
                 return body;
             }
-        })
-        .catch(function(error) {
-            if (error.response.statusCode === 403 && error.response.headers["x-ratelimit-remaining"] === "0") {
-                session.ghRateLimitReset = error.response.headers["x-ratelimit-reset"] * 1000;
-                error.rateLimit = true;
-                if (acc !== undefined) {
-                    error.body = acc;
-                }
-            }
-            return Promise.reject(error);
-        })
+        });
 }
 
 function fetchApi(path, session, raw) {

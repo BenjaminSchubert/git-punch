@@ -20,6 +20,6 @@ var schema = new mongoose.Schema({
 });
 
 
-schema.index({ "sha": 1, "repository": 1 }, { unique: true});
+schema.index({ "sha": 1, "repository": 1 }, { unique: true });
 
 module.exports = mongoose.model('Commit', schema);
