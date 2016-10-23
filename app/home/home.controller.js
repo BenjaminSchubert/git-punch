@@ -15,9 +15,10 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
     var repositories = 0;
 
     $scope.personalShown = false;
+    var fixPersonalShown = false;
 
     $scope.otherSeries.languages = {};
-    $scope.personnalSerie = $scope.createSerie("Personal", "#333");
+    $scope.personalSerie = $scope.createSerie("Personal", "#333");
 
     $scope.addCommit = function(serie, commit) {
         serie.data[commit.hour * 7 + commit.day][2] += commit.count;
@@ -25,12 +26,27 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
     };
 
     $scope.highlight = function() {
-        if ($scope.personalShown) {
-            $scope.findAndRemove($scope.chartConfig.series, $scope.personnalSerie);
-        } else {
-            $scope.chartConfig.series.push($scope.personnalSerie);
+        if (!$scope.personalShown) {
+            $scope.chartConfig.series.push($scope.personalSerie);
+            $scope.personalShown = true;
         }
-        $scope.personalShown = !$scope.personalShown;
+    };
+
+    $scope.removeHighlight = function() {
+        if ($scope.personalShown && !fixPersonalShown) {
+            $scope.findAndRemove($scope.chartConfig.series, $scope.personalSerie);
+            $scope.personalShown = false;
+        }
+    };
+
+    $scope.fixHighlight = function() {
+        fixPersonalShown = !fixPersonalShown;
+
+        if (fixPersonalShown) {
+            $scope.highlight();
+        } else {
+            $scope.removeHighlight();
+        }
     };
 
 
@@ -56,7 +72,7 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
 
     $punchcard.userCommits.then(function(commits) {
         return commits.map(function(commit) {
-            $scope.addCommit($scope.personnalSerie, commit);
+            $scope.addCommit($scope.personalSerie, commit);
         })
     });
 

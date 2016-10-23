@@ -1,7 +1,7 @@
 <div class="row" ng-click="reset()">
     <div class="col-xs-12 col-lg-10">
         <highchart id="chart-personnal" config="chartConfig"></highchart>
-        <button class="btn btn-primary pull-right" ng-class="{'active': personalShown}" ng-click="highlight()">Highlight Me</button>
+        <button class="btn btn-primary pull-right" ng-class="{'active': personalShown}" ng-click="fixHighlight()" ng-mouseover="highlight()" ng-mouseleave="removeHighlight()">Highlight Me</button>
     </div>
     <div class="col-xs-12 col-lg-2">
         <commit-list series="otherSeries.languages" title="'Languages'"></commit-list>
