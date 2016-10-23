@@ -100,6 +100,7 @@ angular.module('gstats.punchcard').controller(
                         maxSize:'12%'
                     },
                     series: {
+                        animation: false,
                         states: {
                             hover: {
                                 enabled: false
