@@ -49,7 +49,7 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
                     name = repository.name;
                 }
 
-                $scope.otherSeries.repositories[repository._id] = $scope.createSerie("repositories", repository.color, repository._id, name, "https://github.com" + repository.full_name);
+                $scope.otherSeries.repositories[repository._id] = $scope.createSerie("repositories", repository.color, repository._id, name, "https://github.com/" + repository.full_name);
             });
 
             stats.commits.map(function(commit) {
