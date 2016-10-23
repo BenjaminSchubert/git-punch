@@ -10,7 +10,7 @@ module.exports = mongoose.model('Project', new mongoose.Schema({
     name: {
         type: String
     },
-    url: {
+    full_name: {
         type: String
     },
     color: {

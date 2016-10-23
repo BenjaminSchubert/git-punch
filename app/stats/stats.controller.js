@@ -21,8 +21,26 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
         totalRepositories = stats.repositories.length;
         totalCommits = stats.commits.length;
 
+        var duplicateNames = stats.repositories
+            .filter(function(repository, index) {
+                return stats.repositories.findIndex(function (repo) {
+                    return repo.name === repository.name;
+                }) !== index;
+            })
+            .map(function(repo) {
+                return repo.name;
+            });
+
         stats.repositories.map(function(repository) {
-            $scope.otherSeries.projects[repository._id] = $scope.createSerie("projects", repository.color, repository._id, repository.name, "https://github.com" + repository.full_name);
+            var name;
+            if (duplicateNames.find(function(repo) { return repo === repository.name; })) {
+                console.log(repository);
+                name = repository.full_name;
+            } else {
+                name = repository.name;
+            }
+
+            $scope.otherSeries.projects[repository._id] = $scope.createSerie("projects", repository.color, repository._id, name, "https://github.com" + repository.full_name);
         });
 
         stats.commits.map(function(commit) {

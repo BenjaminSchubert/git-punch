@@ -76,7 +76,7 @@ function saveMissingCommits(commits, commitsInDB, session, project) {
 
 
 function saveCommits(session, project) {
-    return ghApi(project.url + "/commits?author=" + session.login, session, true)
+    return ghApi("https://api.github.com/repos/" + project.full_name + "/commits?author=" + session.login, session, true)
         // check for missing commits
         .then(function(commits) {
             return Commit
@@ -133,8 +133,8 @@ function saveRepository(repository, session) {
                 { "_id": repository.id },
                 {
                     "_id": repository.id,
-                    "url": repository.url,
                     "name": repository.name,
+                    "full_name": repository.full_name,
                     "color": linguist.color(repository.language) || "#333",
                     "languages": languages
                 },
