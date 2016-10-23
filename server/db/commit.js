@@ -1,23 +1,25 @@
 var mongoose = require('mongoose');
 
 
-module.exports = mongoose.model('Commit', new mongoose.Schema({
-    _id: {
+var schema = new mongoose.Schema({
+    sha: {
         type: String,
-        unique: true,
         index: true
     },
     hour: Number,
     day: Number,
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        type: Number,
         index: true
     },
     project: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Project",
+        type: Number,
         index: true
     },
     languages: [String]
-}));
+});
+
+
+schema.index({ "sha": 1, "project": 1 }, { unique: true});
+
+module.exports = mongoose.model('Commit', schema);

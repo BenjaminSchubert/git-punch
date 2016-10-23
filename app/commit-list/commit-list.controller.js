@@ -16,11 +16,11 @@ angular.module('gstats.commit-list').controller('gstats.commitListController', [
     });
 
     $scope.hover = function(data) {
-        $scope.$parent.$emit("hover", { title: data.title, category: data.category });
+        $scope.$parent.$emit("hover", { id: data.id, category: data.category });
     };
 
     $scope.blur = function(data) {
-        $scope.$parent.$emit("blur", { title: data.title, category: data.category });
+        $scope.$parent.$emit("blur", { id: data.id, category: data.category });
     };
 
     $scope.select = function(data) {
@@ -29,7 +29,7 @@ angular.module('gstats.commit-list').controller('gstats.commitListController', [
         }
         $scope.selected = data;
         waitNext = false;
-        $scope.$parent.$emit("select", {title: data.title, category: data.category});
+        $scope.$parent.$emit("select", { id: data.id, category: data.category });
     }
 
 }]);

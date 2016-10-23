@@ -4,7 +4,7 @@ var angular = require("angular");
 function findAndRemove(series, info) {
     series.splice(
         series.findIndex(function(element) {
-            return element.category == info.category && element.title == info.title;
+            return element.category == info.category && element.id == info.id;
         }),
         1
     );
@@ -31,12 +31,13 @@ angular.module('gstats.punchcard').controller(
         $scope.setupSerie = setupSerie;
         $scope.findAndRemove = findAndRemove;
 
-        $scope.createSerie = function(category, color, title, url) {
+        $scope.createSerie = function(category, color, id, title, url) {
             return {
                 category: category,
                 color: color,
                 commits: 0,
                 data: $scope.setupSerie(),
+                id: id,
                 title: title,
                 url: url
             }
@@ -65,7 +66,7 @@ angular.module('gstats.punchcard').controller(
         };
 
         $scope.$on("hover", function(event, data) {
-           $scope.chartConfig.series.push($scope.otherSeries[data.category][data.title]);
+           $scope.chartConfig.series.push($scope.otherSeries[data.category][data.id]);
         });
 
         $scope.$on("blur", function(event, data) {
@@ -77,8 +78,9 @@ angular.module('gstats.punchcard').controller(
                 $scope.findAndRemove($scope.chartConfig.series, $scope.selected);
                 $scope.selected = null;
             }
+
             $scope.selected = data;
-            $scope.chartConfig.series.push($scope.otherSeries[data.category][data.title]);
+            $scope.chartConfig.series.push($scope.otherSeries[data.category][data.id]);
             $scope.$broadcast("reset-selection");
         });
 

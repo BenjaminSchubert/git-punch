@@ -6,7 +6,7 @@ var app = angular.module('gstats.auth');
 app.factory('gstats.auth.service', function($state, $http) {
     return {
         get user() {
-            return $http.get("api/user")
+            return $http.get("api/private/user")
                 .then(function(user) {
                     return user.data.name;
                 })

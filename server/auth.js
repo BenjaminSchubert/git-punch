@@ -3,11 +3,6 @@ var http = require("request-promise");
 var mongoose = require("mongoose");
 var router = require("express").Router();
 
-var gApi = require("./utils/github-api");
-var db = require("./db/db");
-
-var User = db.User;
-
 
 const GITHUB_CLIENT = process.env["GITHUB_CLIENT"];
 const GITHUB_SECRET = process.env["GITHUB_SECRET"];
@@ -65,16 +60,6 @@ router.get("/callback", function(request, response) {
     http.post({url: url, json: true })
         .then(function(res) {
             request.session.access_token = res["access_token"];
-            return gApi("user", request.session);
-        })
-        .then(function(result) {
-            request.session.login = result.login;
-            request.session.userId = mongoose.Types.ObjectId(result.id);
-            request.session.name = result.name;
-            // we need the `then` clause for the action to be effective
-            User.update({ _id: result.id }, { _id: result.id }, { upsert:true }).then();
-        })
-        .then(function() {
             // FIXME : this doesn't redirect correctly
             response.status(301).redirect(request.session.redirect || "/");
             delete request.session.redirect;

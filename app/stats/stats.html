@@ -6,14 +6,7 @@
 
 <div class="row" ng-click="reset()">
     <div class="col-xs-12 col-lg-8">
-        <highchart id="chart-personnal" config="chartConfig"></highchart>
-
-        <div class="progress animate" ng-if="projectFetched !== totalProjects">
-            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{ projectFetched / totalProjects * 100}}" aria-valuemin="0" aria-valuemax="100" style="width: {{ projectFetched / totalProjects * 100}}%">
-                <span class="sr-only">45% Complete</span>
-            </div>
-        </div>
-
+        <highchart id="chart-personal" config="chartConfig"></highchart>
     </div>
     <div class="col-xs-12 col-lg-2">
         <commit-list series="otherSeries.projects" title="'Projects'"></commit-list>

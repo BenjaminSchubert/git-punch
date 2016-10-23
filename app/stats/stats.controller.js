@@ -12,43 +12,37 @@ angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", 
     angular.extend(this, $controller('gstats.punchcard.controller', {$scope: $scope}));
 
     var totalCommits = 0;
-    var totalProjects = 1;
-    var projectFetched = 0;
+    var totalRepositories = 1;
 
     $scope.otherSeries.projects = {};
     $scope.otherSeries.languages = {};
 
-    $service.projects.catch(function(error) {
-        $scope.retryIn = error.retry;
-    });
+    $service.projects.then(function(stats) {
+        totalRepositories = stats.repositories.length;
+        totalCommits = stats.commits.length;
 
-    $service.commits.then(function(projects) {
-        totalProjects = projects.length;
+        stats.repositories.map(function(repository) {
+            $scope.otherSeries.projects[repository._id] = $scope.createSerie("projects", repository.color, repository._id, repository.name, "https://github.com" + repository.full_name);
+        });
 
-        return Promise.all(projects.map(function(promise) {
-            return promise.then(function(project) {
-                projectFetched += 1;
-                totalCommits += project.commits.length;
-
-                project.commits.map(function(commit) {
-                    commit.languages.map(function(language) {
-                        if ($scope.otherSeries.languages[language] === undefined) {
-                            $scope.otherSeries.languages[language] = $scope.createSerie("languages", "#333", language);
-                        }
-                        $scope.addCommit($scope.otherSeries.languages[language], commit);
-                    });
-
-                    if ($scope.otherSeries.projects[project.name] === undefined) {
-                        $scope.otherSeries.projects[project.name] = $scope.createSerie("projects", project.color, project.name, "https://github.com/" + project.full_name);
-                    }
-                    $scope.addCommit($scope.otherSeries.projects[project.name], commit);
-
-                    $scope.globalSerie.data[commit.hour * 7 + commit.day][2] += 1;
-
-                });
-                $scope.chartConfig.title = getTitle(totalCommits, totalProjects);
+        stats.commits.map(function(commit) {
+            commit.languages.map(function(language) {
+                 if ($scope.otherSeries.languages[language] === undefined) {
+                    $scope.otherSeries.languages[language] = $scope.createSerie("languages", "#333", language, language);
+                }
+                $scope.addCommit($scope.otherSeries.languages[language], commit);
             });
-        }))
+
+            commit.projects.map(function(project) {
+                $scope.addCommit($scope.otherSeries.projects[project], commit);
+            });
+
+            $scope.globalSerie.data[commit.hour * 7 + commit.day][2] += 1;
+        });
+
+        $scope.chartConfig.title = getTitle(totalCommits, totalRepositories);
+
+
     }).then(function() {
         return $http.get("/api/colors", {params: { language: Object.keys($scope.otherSeries.languages) }});
     }).then(function(request) {
