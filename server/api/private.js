@@ -155,12 +155,37 @@ function saveRepository(repository, session) {
 }
 
 
+function removeDanglingRepositories(repositories, session) {
+    var repository_ids = repositories.map(function(repository) { return repository.id });
+
+    return Promise
+        .all([
+            Repository.remove({
+                user: session.userId,
+                id: { $nin: repository_ids }
+            }),
+            Commit.remove({
+                user: session.userId,
+                project: { $nin: repository_ids }
+            })
+        ]);
+}
+
+
 function getRepositories(session) {
     return ghApi("user/repos?per_page=100", session)
         .then(function(repositories) {
-            return Promise.all(repositories.map(function(repository) {
-                return saveRepository(repository, session);
-            }))
+            return Promise
+                .all([
+                    Promise.all(repositories.map(function(repository) {
+                        return saveRepository(repository, session);
+                    })),
+                    removeDanglingRepositories(repositories, session)
+                ])
+        })
+        .then(function(promises) {
+            // send back only new repositories, we don't care about dangling ones
+            return promises[0];
         })
         .catch(function(err) {
             if (err.rateLimit === true) {
@@ -270,6 +295,10 @@ router.get("/repositories", function(request, response) {
         })
         .then(function(data) {
             response.send(data);
+        })
+        .catch(function(error) {
+            console.log(error);
+            response.status(500).send();
         })
 });
 
