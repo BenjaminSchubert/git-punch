@@ -30,6 +30,13 @@ var store = new MongoDBStore({
 });
 
 
+if (process.env.NODE_ENV === "development") {
+    app.use(require("connect-livereload")({
+        port: 35729
+    }))
+}
+
+
 app.use(session({
     secret: SECRET_KEY,
     resave: false,
