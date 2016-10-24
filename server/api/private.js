@@ -79,15 +79,26 @@ function saveCommits(session, repository) {
     return ghApi("https://api.github.com/repos/" + repository.full_name + "/commits?author=" + session.login, session, true)
         // check for missing commits
         .then(function(commits) {
-            return Commit
-                .find({
-                    "sha": { "$in": commits.map(function(commit) { return commit.sha; })},
-                    "repository": repository.id,
-                    "user": session.userId
-                })
-                .then(function(commitsInDB) {
-                    return saveMissingCommits(commits, commitsInDB, session, repository)
-                })
+            var shas = commits.map(function(commit) { return commit.sha; });
+
+            return Promise
+                .all([
+                    Commit
+                        .find({
+                            "sha": { "$in": shas },
+                            "repository": repository.id,
+                            "user": session.userId
+                        })
+                        .then(function(commitsInDB) {
+                            return saveMissingCommits(commits, commitsInDB, session, repository)
+                        }),
+                    Commit
+                        .remove({
+                            "sha": { "$nin": shas },
+                            "repository": repository.id,
+                            "user": session.userId
+                        })
+                ])
         })
         .catch(function(err) {
             // we are limited by GitHub API, let's just use local content
@@ -239,7 +250,8 @@ router.get("/repositories", function(request, response) {
             return Promise.reject(err);
         })
         .then(function(repositories) {
-            return Promise.all(repositories.map(function(repository) {
+            return Promise
+                .all(repositories.map(function(repository) {
                     return saveCommits(request.session, repository);
                 }))
                 .then(function() {
