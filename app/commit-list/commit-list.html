@@ -5,16 +5,18 @@
     </li>
 </ul>
 
-<ul class="list-group">
-    <li
-            class="list-group-item"
-            ng-repeat="data in $ctrl.series | orderByCommit"
-            ng-mouseenter="hover(data)" ng-mouseleave="blur(data)"
-            ng-click="select(data); $event.stopPropagation()"
-            ng-class="{'selected': selected == data}"
-    >
-        <span class="badge" ng-style="{'background-color': data.color}">{{ data.commits }}</span>
-        <a href="{{ data.url }}" ng-if="data.url !== undefined" target="_blank">{{ data.title }}</a>
-        <span ng-if="data.url === undefined">{{ data.title }}</span>
-    </li>
-</ul>
+<div class="scrollable-list">
+    <ul class="list-group">
+        <li
+                class="list-group-item"
+                ng-repeat="data in $ctrl.series | orderByCommit"
+                ng-mouseenter="hover(data)" ng-mouseleave="blur(data)"
+                ng-click="select(data); $event.stopPropagation()"
+                ng-class="{'selected': selected == data}"
+        >
+            <span class="badge" ng-style="{'background-color': data.color}">{{ data.commits }}</span>
+            <a href="{{ data.url }}" ng-if="data.url !== undefined" target="_blank">{{ data.title }}</a>
+            <span ng-if="data.url === undefined">{{ data.title }}</span>
+        </li>
+    </ul>
+</div>

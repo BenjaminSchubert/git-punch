@@ -26,6 +26,24 @@
   border-color: transparent;
 }
 
+commit-list {
+  position: absolute;
+  bottom: 64px;
+  top: 64px;
+}
+
+.scrollable-list {
+  height: 100%;
+  padding-bottom: 50px;
+  border-top: 1px solid #DDD;
+  border-radius: 4px;
+}
+
 .list-group:not(.list-title) {
-  overflow-y: scroll;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.pull-right {
+  right: 0;
 }

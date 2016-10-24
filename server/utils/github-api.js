@@ -21,9 +21,15 @@ function _fetchApi(path, session, acc) {
             resolveWithFullResponse: true
         })
         .catch(function(error) {
-            if (error.response.statusCode === 403 && error.response.headers["x-ratelimit-remaining"] === "0") {
-                session.ghRateLimitReset = error.response.headers["x-ratelimit-reset"] * 1000;
-                error.rateLimit = true;
+            if (error.response.statusCode === 403) {
+                if (error.response.headers["x-ratelimit-remaining"] === "0") {
+                    session.ghRateLimitReset = error.response.headers["x-ratelimit-reset"] * 1000;
+                    error.rateLimit = true;
+                } else if (error.response.headers["retry-after"] !== undefined) {
+                    session.ghRateLimitReset = error.response.headers["retry-after"] * 1000;
+                    error.rateLimit = true;
+                }
+
                 if (acc !== undefined) {
                     error.body = acc;
                 }

@@ -1,17 +1,12 @@
-<div class="row" ng-if="limitedUntil !== undefined">
-    <div class="alert alert-danger" role="alert">
-        Maximum requests exceeded. Please retry after {{ limitedUntil | date:'HH:mm' }} (We cache results, so if you can't download everything at once, we're sorry. It will hopefully work next time !)
-    </div>
-</div>
-
 <div class="row" ng-click="reset()">
     <div class="col-xs-12 col-lg-8">
+        <div class="row" ng-if="limitedUntil !== undefined">
+            <div class="alert alert-danger col-xs-12" role="alert">
+                Maximum requests exceeded. Please retry after {{ limitedUntil | date:'HH:mm' }} (We cache results, so if you can't download everything at once, we're sorry. It will hopefully work next time !)
+            </div>
+        </div>
         <highchart id="chart-personal" config="chartConfig"></highchart>
     </div>
-    <div class="col-xs-12 col-lg-2">
-        <commit-list series="otherSeries.repositories" title="'Repositories'"></commit-list>
-    </div>
-    <div class="col-xs-12 col-lg-2">
-        <commit-list series="otherSeries.languages" title="'Languages'"></commit-list>
-    </div>
+    <commit-list series="otherSeries.repositories" title="'Repositories'" class="col-xs-12 col-lg-2 list"></commit-list>
+    <commit-list series="otherSeries.languages" title="'Languages'" class="col-xs-12 col-lg-2 list pull-right"></commit-list>
 </div>
