@@ -120,7 +120,6 @@ gulp.task("app", ["templates"], function() {
         .pipe(sourcemaps.write("./"))
         .pipe(cachebust.resources())
         .pipe(size({ showFiles: true, showTotal: false }))
-        .pipe(size())
         .pipe(gulp.dest("dist/"));
 });
 
