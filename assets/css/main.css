@@ -4085,3 +4085,9 @@ body.is-loading #banner p {
 #banner a[class="logo"] {
     border-bottom: none;
 }
+
+/* Menu app link */
+#menu-tryapp-link {
+	margin-left: 20px;
+	color: #cccccc;
+}
