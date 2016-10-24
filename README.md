@@ -9,7 +9,7 @@ An user should be able to :
 
 ## About our app
 ### Features
-Our app consists on using all the commits of a given user to display the projects and the languages used the most (in number of commits). A punchard displays when the commits have been made. Global statistics are shown as well, based on the aggregation on the commits of each user having visited the webapp.
+Our app consists on using all the commits of a given user to display when he made them (using a punchcard), and in which projects and languages he contributed the most. Global statistics can be displayed as well, based on the aggregation on the commits of each user having visited the webapp.
 
 ### Usage
 When the user arrives on the webapp, he can see the global stats. By going on the "my stats" page, he can log in with his github account and see his stats according to the commits he made, in public and private repos alike.
