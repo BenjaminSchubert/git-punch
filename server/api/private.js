@@ -1,3 +1,7 @@
+/**
+ * Defines the private api for which users must be logged in through GitHub OAuth
+ */
+
 var router = require("express").Router();
 
 var ghApi = require("../utils/github-api");
@@ -9,6 +13,12 @@ var Commit = db.Commit;
 var Repository = db.Repository;
 
 
+/**
+ * Get the extensions for the list of given files
+ *
+ * @param files for which to get the extensions
+ * @returns {Array.<String>}
+ */
 function getExtensions(files) {
     return files.map(function(file) {
         return file.filename.split("/").pop().split(".").pop();
@@ -18,6 +28,14 @@ function getExtensions(files) {
 }
 
 
+/**
+ * Get the languages for the given list of extensions.
+ *
+ * @param extensions for which to get the languages
+ * @param repositoryLanguages found in the repository, to allow for filtering in
+ *              case there are multiple languages for the given extension
+ * @returns {Array.<String>}
+ */
 function getLanguages(extensions, repositoryLanguages) {
     return extensions.map(function(extension) {
         var languages = linguist.languages("." + extension);
@@ -37,16 +55,30 @@ function getLanguages(extensions, repositoryLanguages) {
 }
 
 
+/**
+ * Downloads and saves information about commits that are not yet in the database
+ *
+ * @param commits list for a given repository
+ * @param commitsInDB for the given repository
+ * @param session from the user
+ * @param repository of the commits
+ * @returns {*} a promise telling whether the operation succeeded
+ */
 function saveMissingCommits(commits, commitsInDB, session, repository) {
+    // filter new commits
     var newCommits = commits
         .filter(function(commit) {
-            return !commitsInDB.find(function(commitInDB) { return commit.sha === commitInDB.sha && repository.id == commitInDB.repository; });
+            return !commitsInDB.find(function(commitInDB) {
+                return commit.sha === commitInDB.sha && repository.id == commitInDB.repository;
+            });
         });
 
     if (newCommits.length == 0) {
+        // no new commits to save
         return commitsInDB;
     }
 
+    // download commits information and prepare them
     return Promise.all(newCommits
         .map(function(commit) {
             return ghApi(commit["url"], session, true)
@@ -63,19 +95,32 @@ function saveMissingCommits(commits, commitsInDB, session, repository) {
                     }
                 })
         }))
+        // save the commits
         .then(function(commits) {
             return Commit.collection.insert(commits);
         })
         .catch(function(err) {
             if (err.rateLimit === true) {
+                // we've been limited, let's just return
                 return [];
             }
-            throw err;
+            // unknown error
+            return Promise.reject(err);
         })
 }
 
 
-function saveCommits(session, repository) {
+/**
+ * Check all commits for a repository and ensures that all commits
+ * are saved in the database. If not, will download and save them.
+ *
+ * Also checks that no extra commits are there and removes them if necessary
+ *
+ * @param session of the user
+ * @param repository for which to get the commits
+ * @returns {*} a promise telling whether the operation succeeded
+ */
+function checkAndSaveCommits(session, repository) {
     return ghApi("https://api.github.com/repos/" + repository.full_name + "/commits?author=" + session.login, session, true)
         // check for missing commits
         .then(function(commits) {
@@ -83,6 +128,7 @@ function saveCommits(session, repository) {
 
             return Promise
                 .all([
+                    // insert missing commits
                     Commit
                         .find({
                             "sha": { "$in": shas },
@@ -92,6 +138,7 @@ function saveCommits(session, repository) {
                         .then(function(commitsInDB) {
                             return saveMissingCommits(commits, commitsInDB, session, repository)
                         }),
+                    // remove dangling commits
                     Commit
                         .remove({
                             "sha": { "$nin": shas },
@@ -115,6 +162,12 @@ function saveCommits(session, repository) {
 }
 
 
+/**
+ * Get all commits for the given user, sorted by languages and repositories
+ *
+ * @param session of the user
+ * @returns {*} Promise containing all the commits
+ */
 function getCommits(session) {
     return Commit.aggregate([
         { "$match": { "user": session.userId } },
@@ -132,6 +185,13 @@ function getCommits(session) {
 }
 
 
+/**
+ * saves the given repository
+ *
+ * @param repository to save
+ * @param session of the user for which to save the repository
+ * @returns {*} Promise telling whether the operation was successful
+ */
 function saveRepository(repository, session) {
     return ghApi(repository.languages_url, session, true)
         .then(function(languages) {
@@ -155,6 +215,13 @@ function saveRepository(repository, session) {
 }
 
 
+/**
+ * Remove all repositories in the database but not in the list for the given user
+ *
+ * @param repositories to keep
+ * @param session of the user for which to remove the repositories
+ * @returns {a|Promise|*} whether something was removed or not
+ */
 function removeDanglingRepositories(repositories, session) {
     var repository_ids = repositories.map(function(repository) { return repository.id });
 
@@ -172,6 +239,12 @@ function removeDanglingRepositories(repositories, session) {
 }
 
 
+/**
+ * Get all repositories for the given user
+ *
+ * @param session of the user
+ * @returns {*} Promise of a list of repositories
+ */
 function getRepositories(session) {
     return ghApi("user/repos?per_page=100", session)
         .then(function(repositories) {
@@ -189,7 +262,7 @@ function getRepositories(session) {
         })
         .catch(function(err) {
             if (err.rateLimit === true) {
-                // we are limited by GitHub
+                // we are limited by GitHub, let's return what we have in the database
                 return Commit
                     .find({"user": session.userId})
                     .distinct("repository")
@@ -203,11 +276,18 @@ function getRepositories(session) {
                         })
                     });
             }
+            // unknown error
             return Promise.reject(err);
         })
 }
 
 
+/**
+ * Middleware to check whether the user is logged in or not
+ *
+ * This will also add information whether the user is limited by the
+ * GitHub api or not on the response
+ */
 router.use(function(request, response, next) {
     if (request.session.access_token === undefined) {
         // FIXME : a correct redirect ?
@@ -217,6 +297,7 @@ router.use(function(request, response, next) {
 
     var unCheckedSend = response.send.bind(response);
 
+    // monkey patch the response to be able to add data before effectively sending it
     response.send = function(data) {
         if (request.session.ghRateLimitReset !== undefined) {
             if (new Date(request.session.ghRateLimitReset) > new Date()) {
@@ -232,6 +313,12 @@ router.use(function(request, response, next) {
 });
 
 
+/**
+ * Ensures we have information about the user's information.
+ *
+ * If we don't we won't be able to know who did the request and
+ * therefore won't be able to give back information
+ */
 router.use(function(request, response, next) {
     if (request.session.userId === undefined) {
         response.status(403).send({ error: "User information couldn't be retrieved from GitHub, we can't know who you are." });
@@ -241,12 +328,17 @@ router.use(function(request, response, next) {
 });
 
 
-
+/**
+ * Return user's information
+ */
 router.get("/user", function(request, response) {
     response.send({ name: request.session.name });
 });
 
 
+/**
+ * Send all commits for the given user
+ */
 router.get("/commits", function(request, response) {
     Commit
         .aggregate([
@@ -266,10 +358,22 @@ router.get("/commits", function(request, response) {
 });
 
 
+/**
+ * Send all information concerning the given user
+ *
+ * This will send
+ *  - a list of languages used in its projects
+ *  - a list of projects
+ *  - a list of all commits, with their respective project(s) and language(s)
+ *
+ * This will also sync all user's data with the GitHub api
+ */
 router.get("/repositories", function(request, response) {
+    // get all repositories from github
     getRepositories(request.session)
         .catch(function(err) {
             if (err.rateLimit === true) {
+                // we might have partial data, let's use this
                 return err.data;
             }
             return Promise.reject(err);
@@ -277,9 +381,11 @@ router.get("/repositories", function(request, response) {
         .then(function(repositories) {
             return Promise
                 .all(repositories.map(function(repository) {
-                    return saveCommits(request.session, repository);
+                    // save all commits
+                    return checkAndSaveCommits(request.session, repository);
                 }))
                 .then(function() {
+                    // build data
                     return Promise.all([
                         getCommits(request.session),
                         utils.getLanguages(request.session)

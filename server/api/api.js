@@ -1,3 +1,7 @@
+/**
+ * This file wires up the whole api
+ */
+
 var router = require("express").Router();
 
 var ghApi = require("../utils/github-api");
@@ -6,6 +10,12 @@ var db = require("../db/db");
 var User = db.User;
 
 
+/**
+ * Sets the content type for the api to json (only json is supported here).
+ *
+ * Also checks that we have the current user's information. If not, we fetch it
+ * from GitHub
+ */
 router.use(function(request, response, next) {
     response.setHeader('Content-Type', 'application/json');
 
