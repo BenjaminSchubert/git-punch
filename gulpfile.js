@@ -65,8 +65,9 @@ gulp.task("vendor", function() {
 
      return stream
          .pipe(cachebust.resources())
-         .pipe(size({ showFiles: true, showTotal: false }))
-         .pipe(gulp.dest("dist/"));
+         .pipe(gulp.dest("dist/"))
+         // this must be after : why ??
+         .pipe(size({ showFiles: true, showTotal: false }));
 });
 
 
@@ -142,8 +143,10 @@ gulp.task("watch", ["build"], function () {
         util.log("Restarting server");
         server.start();
     });
-    gulp.watch(["app/*.js", "app/**/*.js", "app/**/*.html", "app/**/*.less"], function(file) {
-        gulp.run("build");
-        server.notify.apply(server, [file]);
+
+    gulp.watch(["app/*.js", "app/**/*.js", "app/**/*.html", "app/**/*.less"], ["build"]);
+
+    gulp.watch(["dist/*"], function(event) {
+        server.notify([event.path])
     });
 });
