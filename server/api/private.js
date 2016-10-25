@@ -263,12 +263,8 @@ function getRepositories(session) {
         .catch(function(err) {
             if (err.rateLimit === true) {
                 // we are limited by GitHub, let's return what we have in the database
-                return Commit
-                    .find({"user": session.userId})
-                    .distinct("repository")
-                    .then(function(repositories) {
-                        return Repository.find({"id": { "$in": repositories } }, "-__v -_id");
-                    })
+                return Repository
+                    .find({"user": session.userId}, "-__v -_id")
                     .then(function(repositories) {
                         return Promise.reject({
                             data: repositories,
