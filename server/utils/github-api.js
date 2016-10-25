@@ -2,6 +2,8 @@
  * Provides helpers to interact with GitHub API
  */
 
+"use strict";
+
 var http = require("request-promise");
 var link = require("parse-link-header");
 

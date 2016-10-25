@@ -2,6 +2,8 @@
  * Various utilities for the api
  */
 
+"use strict";
+
 var db = require("../db/db");
 var linguist = require("../utils/linguist");
 

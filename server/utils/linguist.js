@@ -1,3 +1,5 @@
+"use strict";
+
 var languages = require('language-map');
 
 var extensions = {};

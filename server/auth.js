@@ -2,6 +2,8 @@
  * Defines authentication related routes
  */
 
+"use strict";
+
 var crypto = require("crypto");
 var http = require("request-promise");
 var mongoose = require("mongoose");

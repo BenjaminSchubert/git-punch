@@ -2,6 +2,8 @@
  * Defines the public part of the api
  */
 
+"use strict";
+
 var router = require("express").Router();
 
 var db = require("../db/db");

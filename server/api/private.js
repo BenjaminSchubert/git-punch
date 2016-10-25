@@ -2,6 +2,8 @@
  * Defines the private api for which users must be logged in through GitHub OAuth
  */
 
+"use strict";
+
 var router = require("express").Router();
 
 var ghApi = require("../utils/github-api");

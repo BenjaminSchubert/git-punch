@@ -2,6 +2,8 @@
  * This file wires up the whole api
  */
 
+"use strict";
+
 var router = require("express").Router();
 
 var ghApi = require("../utils/github-api");
