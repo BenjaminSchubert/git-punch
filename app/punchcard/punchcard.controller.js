@@ -23,8 +23,8 @@ function setupSerie() {
 }
 
 
-angular.module('gstats.punchcard').controller(
-    'gstats.punchcard.controller', ["$scope", function PunchcardController($scope) {
+angular.module("gstats.punchcard").controller(
+    "gstats.punchcard.controller", ["$scope", function PunchcardController($scope) {
         $scope.selected = null;
         $scope.retryIn = undefined;
 
@@ -87,17 +87,17 @@ angular.module('gstats.punchcard').controller(
         $scope.chartConfig = {
             options: {
                 chart: {
-                    type: 'bubble',
+                    type: "bubble",
                     plotBorderWidth: 1,
-                    zoomType: 'xy'
+                    zoomType: "xy"
                 },
                 legend: {
                     enabled: false
                 },
                 plotOptions: {
                     bubble:{
-                        minSize:'0%',
-                        maxSize:'12%'
+                        minSize:"0%",
+                        maxSize:"12%"
                     },
                     series: {
                         animation: false,
@@ -119,7 +119,7 @@ angular.module('gstats.punchcard').controller(
             loading: true,
 
             xAxis: {
-                minorGridLineDashStyle: 'dash',
+                minorGridLineDashStyle: "dash",
                 minorTickInterval: 1,
                 minorTickWidth: 0,
                 tickInterval: 1,
@@ -148,7 +148,7 @@ angular.module('gstats.punchcard').controller(
                 endOnTick: false,
                 maxPadding: 0.9,
                 lineWidth: 0,
-                categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', "Sunday"]
+                categories: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
             },
 
             series: [$scope.globalSerie]

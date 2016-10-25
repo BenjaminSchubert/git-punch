@@ -1,3 +1,7 @@
+/**
+ * Declares the main angular module for Git-Punch
+ */
+
 "use strict";
 
 var angular = require("angular");
