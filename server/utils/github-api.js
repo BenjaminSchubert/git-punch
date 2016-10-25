@@ -41,7 +41,7 @@ function _fetchApi(path, session, acc) {
                     session.ghRateLimitReset = error.response.headers["x-ratelimit-reset"] * 1000;
                     error.rateLimit = true;
                 } else if (error.response.headers["retry-after"] !== undefined) {
-                    session.ghRateLimitReset = error.response.headers["retry-after"] * 1000;
+                    session.ghRateLimitReset = new Date() + error.response.headers["retry-after"] * 1000;
                     error.rateLimit = true;
                 }
 
