@@ -1,3 +1,7 @@
+/**
+ * Defines the public part of the api
+ */
+
 var router = require("express").Router();
 
 var db = require("../db/db");
@@ -9,6 +13,9 @@ var Repository = db.Repository;
 var User = db.User;
 
 
+/**
+ * Route to get the count of all users
+ */
 router.get("/users", function(request, response) {
     User
         .count()
@@ -18,6 +25,9 @@ router.get("/users", function(request, response) {
 });
 
 
+/**
+ * Route to get the count of all repositories
+ */
 router.get("/repositories", function(request, response) {
     Repository
         .distinct("id")
@@ -28,6 +38,9 @@ router.get("/repositories", function(request, response) {
 });
 
 
+/**
+ * Returns the list of all commits registered by the application
+ */
 router.get("/commits", function(request, response) {
     Promise.all([
         Commit
