@@ -18,11 +18,23 @@ Object.keys(languages).forEach(function(language) {
 });
 
 
+/**
+ * Get the color associated with the given language
+ *
+ * @param language for which to get the color
+ * @returns {String}
+ */
 function getColor(language) {
     return colors[language];
 }
 
 
+/**
+ * Get the languages associated with the given extension
+ *
+ * @param extension for which to get the language
+ * @returns {String[]}
+ */
 function getLanguages(extension) {
     return extensions[extension];
 }

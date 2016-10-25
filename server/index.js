@@ -37,6 +37,9 @@ if (process.env.NODE_ENV === "development") {
 }
 
 
+/**
+ * Session setup
+ */
 app.use(session({
     secret: SECRET_KEY,
     resave: false,
@@ -55,6 +58,10 @@ app.use(session({
 
 app.set("port", (process.env.PORT || 5000));
 
+
+/**
+ * setup routes
+ */
 app.use(express.static("dist/"));
 app.use("/auth", auth);
 app.use("/api", api);

@@ -1,3 +1,7 @@
+/**
+ * Defines authentication related routes
+ */
+
 var crypto = require("crypto");
 var http = require("request-promise");
 var mongoose = require("mongoose");
@@ -19,12 +23,17 @@ if (GITHUB_SECRET === undefined) {
     process.exit(1);
 }
 
-
+/**
+ * Redirect to login on base access
+ */
 router.get("/", function(request, response) {
     response.redirect(301, "login");
 });
 
 
+/**
+ * Redirect the user to GitHub for authorization
+ */
 router.get("/login", function(request, response) {
     response.statusCode = 302;
     response.setHeader("location", "https://github.com/login/oauth/authorize?"
@@ -36,12 +45,18 @@ router.get("/login", function(request, response) {
 });
 
 
+/**
+ * Removes user's session
+ */
 router.get("/logout", function(request, response) {
     request.session.destroy();
     response.redirect(301, "/");
 });
 
 
+/**
+ * Callback to which to redirect GitHub oauth
+ */
 router.get("/callback", function(request, response) {
     if (request.query.state !== state) {
         // FIXME : error handling

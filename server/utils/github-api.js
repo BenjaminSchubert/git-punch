@@ -1,7 +1,20 @@
+/**
+ * Provides helpers to interact with GitHub API
+ */
+
 var http = require("request-promise");
 var link = require("parse-link-header");
 
 
+/**
+ * Fetch the path recursively if a link is present in the header and returns the body concatenated
+ *
+ * @param path to fetch
+ * @param session with which to authenticate
+ * @param acc value from previous calls
+ * @returns {*}
+ * @private
+ */
 function _fetchApi(path, session, acc) {
     if (session.ghRateLimitReset) {
         if (new Date(session.ghRateLimitReset) > new Date()) {
@@ -52,6 +65,13 @@ function _fetchApi(path, session, acc) {
         });
 }
 
+/**
+ * fetch the data available on the given path
+ *
+ * @param path to fetch
+ * @param session with which to authenticate to make the call
+ * @param raw if the github API url must not be prepended to the path
+ */
 function fetchApi(path, session, raw) {
     return _fetchApi(raw ? path : "https://api.github.com/" + path, session);
 }
