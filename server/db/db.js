@@ -1,3 +1,7 @@
+/**
+ * Sets the connection to the database and exports available models
+ */
+
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 

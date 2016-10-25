@@ -1,6 +1,11 @@
 var mongoose = require('mongoose');
 
 
+/**
+ * Schema representing a commit
+ *
+ * @type {mongoose.Schema}
+ */
 var schema = new mongoose.Schema({
     sha: {
         type: String,
