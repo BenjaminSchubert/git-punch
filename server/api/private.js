@@ -402,7 +402,7 @@ router.get("/repositories", function(request, response) {
         })
         .catch(function(error) {
             console.log(error);
-            response.status(500).send();
+            response.status(500).send({});
         })
 });
 
