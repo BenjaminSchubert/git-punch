@@ -11,22 +11,26 @@
     margin-bottom: 20px;
     padding: 30px;
 
-    font-size: 16pt;
+    font-size: 15pt;
 
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-#presentation, #app-message {
+#presentation {
     text-align: center;
+    margin-top: 20px;
+    margin-bottom: 50px;
+
+    font-size: 17pt;
 }
 
 #presentation h2 {
     margin-top: 0px;
 }
 
-#app-message {
-    margin-top: 20px;
+#catchphrase {
+    margin: 30px 0px;
 }
 
 .feature-container {
@@ -34,7 +38,7 @@
     margin-top: 20px;
     margin-left: 10px;
     margin-right: 10px;
-    padding-top: 10px;
+    padding-top: 20px;
 }
 
 .feature-container p {
