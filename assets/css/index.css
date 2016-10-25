@@ -1,6 +1,14 @@
+.navbar-brand {
+    left: 50%;
+    transform: translateX(-50%);
+    position: absolute;
+
+    font-size: 18pt;
+}
+
 #container {
     margin-top: 61px;
-    margin-bottom: 61px;
+    margin-bottom: 20px;
     padding: 30px;
 
     font-size: 16pt;
@@ -9,7 +17,7 @@
     border-radius: 4px;
 }
 
-#presentation {
+#presentation, #app-message {
     text-align: center;
 }
 
@@ -17,12 +25,24 @@
     margin-top: 0px;
 }
 
+#app-message {
+    margin-top: 20px;
+}
+
 .feature-container {
     border-top: 1px solid #ccc;
     margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
     padding-top: 10px;
 }
 
 .feature-container p {
     margin-top: 10px;
+}
+
+#footer {
+    margin-bottom: 0px;
+
+    border-radius: 0px;
 }
