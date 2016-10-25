@@ -1,6 +1,15 @@
+"use strict";
+
 var angular = require("angular");
 
 
+/**
+ * Formats a title given the number of commits and repositories
+ *
+ * @param commits number of commits
+ * @param repositories number of repositories
+ * @returns {{text: string}}
+ */
 function getTitle(commits, repositories) {
     return {
         text: 'Commit Statistics from ' + commits + " commits accross " + repositories + " repositories."
@@ -8,6 +17,9 @@ function getTitle(commits, repositories) {
 }
 
 
+/**
+ * Controller for the stats module
+ */
 angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", "$http", "$controller", "gstats.stats.service", function PunchcardController($scope, $http, $controller, $service) {
     angular.extend(this, $controller('gstats.punchcard.controller', {$scope: $scope}));
 
