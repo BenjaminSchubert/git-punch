@@ -1,82 +1,69 @@
 <!DOCTYPE HTML>
-<!--
-	Original design:
-	Solid State by HTML5 UP
-	html5up.net | @ajlkn
--->
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <title>git-punch</title>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="assets/css/main.css"/>
+
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="assets/css/index.css"/>
 </head>
 <body>
 
-<div id="page-wrapper">
-
-    <header id="header" class="alt">
-        <h1>
-			<a href="index.html">git-punch</a>
-			<a id="menu-tryapp-link" href="https://git-punch.herokuapp.com/">Try the app</a>
-		</h1>
-    </header>
-
-    <section id="banner">
-        <div class="inner">
-            <a href="https://github.com/BenjaminSchubert/git-punch" class="logo"><span class="icon fa-code-fork"></span></a>
-            <h2>git-punch</h2>
-            <p>View your commits languages across all the repos you've contributed to.</p>
-            <p><a href="https://git-punch.herokuapp.com/" class="special">Try the app!</a></p>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">git-punch</a>
         </div>
-    </section>
-
-    <section id="wrapper">
-	
-        <section id="one" class="wrapper spotlight style1">
-            <div class="inner">
-                <a href="#" class="image"><img src="images/graph.png" alt=""/></a>
-                <div class="content">
-                    <h2 class="major">Punchcard for your commits</h2>
-                    <p>
-						Shows all the commits you've done in a nice punchard.
-						<br>
-						Access global statistics to see it for all users that visited the app.
-					</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="two" class="wrapper alt spotlight style2">
-            <div class="inner">
-                <a href="#" class="image"><img src="images/repos-languages.png" alt=""/></a>
-                <div class="content">
-                    <h2 class="major">Commits by repos and languages</h2>
-                    <p>Watch where you've been active and in which language you and all the users are coding.</p>
-                </div>
-            </div>
-        </section>
-		
-    </section>
-
-    <section id="footer">
-        <div class="inner">
-            <ul class="copyright">
-                <li>&copy; Benjamin Schubert and Basile Vu. All rights reserved.</li>
-				<li>Our github repo can be found <a href="https://github.com/BenjaminSchubert/git-punch">there</a>.</li>
-                <li>Original design from: <a href="http://html5up.net">HTML5 UP</a></li>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="https://git-punch.herokuapp.com/">Our webapp</a></li>
             </ul>
-        </div>
-    </section>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
 
+<div id="container" class="container">
+    <div id="presentation">
+        <h2>View your commits stats across all the repos you've contributed to.</h2>
+        <p>Easily check, in public and private repos alike, where and when you've been active.</p>
+    </div>
+
+    <div class="row feature-container">
+        <div class="col-md-7">
+            <h2 class="major">Punchcard for your commits</h2>
+            <p>
+                Shows all the commits you've done in a nice punchard.
+                <br>
+                Access global statistics to see it for all users that visited the app.
+            </p>
+        </div>
+        <div class="col-md-5">
+            <img class="img-responsive" src="assets/img/graph.png">
+        </div>
+    </div>
+
+    <div class="row feature-container">
+        <div class="col-md-6">
+            <img class="img-responsive" src="assets/img/repos-languages.png">
+        </div>
+
+        <div class="col-md-6">
+            <h2 class="major">Commits by repos and languages</h2>
+            <p>Watch where you've been active and in which language you and all the users are coding.</p>
+        </div>
+    </div>
 </div>
 
-<!-- Scripts -->
-<script src="assets/js/skel.min.js"></script>
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/jquery.scrollex.min.js"></script>
-<script src="assets/js/util.js"></script>
-<script src="assets/js/main.js"></script>
-
+<div class="navbar navbar-inverse navbar-fixed-bottom">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav">
+            <li><p class="navbar-text">Copyright © 2016. All Rights Reserved - Benjamin Schubert and Basile Vu</p></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><p class="navbar-text">See the project on <a href="https://github.com/BenjaminSchubert/git-punch"
+                                                             target="_blank">GitHub</a></p></li>
+        </ul>
+    </div>
+</div>
 </body>
 </html>

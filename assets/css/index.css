@@ -1,0 +1,28 @@
+#container {
+    margin-top: 61px;
+    margin-bottom: 61px;
+    padding: 30px;
+
+    font-size: 16pt;
+
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#presentation {
+    text-align: center;
+}
+
+#presentation h2 {
+    margin-top: 0px;
+}
+
+.feature-container {
+    border-top: 1px solid #ccc;
+    margin-top: 20px;
+    padding-top: 10px;
+}
+
+.feature-container p {
+    margin-top: 10px;
+}
