@@ -235,7 +235,7 @@ function removeDanglingRepositories(repositories, session) {
             }),
             Commit.remove({
                 user: session.userId,
-                project: { $nin: repository_ids }
+                repository: { $nin: repository_ids }
             })
         ]);
 }
