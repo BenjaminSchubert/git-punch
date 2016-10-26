@@ -8,7 +8,7 @@ angular.module("gstats.commit-list").filter('orderByCommit', function() {
             .map(function(key) {
                 return input[key];
             }).sort(function(a, b) {
-                return a.commits > b.commits ? -1: a.commits < b.commits ? 1 : 0;
+                return a.commits > b.commits ? -1: a.commits < b.commits ? 1 : a.title > b.title ? 1 : a.title < b.title ? -1 : 0;
             });
     };
 });
