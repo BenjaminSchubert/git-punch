@@ -67,7 +67,7 @@ router.get("/callback", function(request, response) {
         return;
     }
 
-    url = "https://github.com/login/oauth/access_token?"
+    var url = "https://github.com/login/oauth/access_token?"
         + "client_id=" + GITHUB_CLIENT
         + "&client_secret=" + GITHUB_SECRET
         + "&code=" + request.query.code
@@ -76,10 +76,15 @@ router.get("/callback", function(request, response) {
 
     http.post({url: url, json: true })
         .then(function(res) {
+            if (res.error !== undefined) {
+                console.log("ERROR:", res.error_description);
+                response.status(500).send("An error occured while signing you up, sorry");
+                return;
+            }
+
             request.session.access_token = res["access_token"];
             // FIXME : this doesn't redirect correctly
-            response.status(301).redirect(request.session.redirect || "/");
-            delete request.session.redirect;
+            response.status(301).redirect("/#/stats");
         });
 });
 

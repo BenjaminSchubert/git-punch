@@ -7,7 +7,6 @@ var source = require("vinyl-source-stream");
 var buffer = require("vinyl-buffer");
 var sourcemaps = require("gulp-sourcemaps");
 var browserify = require("browserify");
-const notify = require("gulp-notify");
 var ngAnnotate = require('browserify-ngannotate');
 var purify = require("gulp-purifycss");
 var stripCssComments = require("gulp-strip-css-comments");

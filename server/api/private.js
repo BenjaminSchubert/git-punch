@@ -289,14 +289,14 @@ function getRepositories(session) {
 router.use(function(request, response, next) {
     if (request.session.access_token === undefined) {
         // FIXME : a correct redirect ?
-        response.status(401).send({url: "/auth/login"});
+        response.status(401).json({url: "/auth/login"});
         return;
     }
 
-    var unCheckedSend = response.send.bind(response);
+    var unCheckedSend = response.json.bind(response);
 
     // monkey patch the response to be able to add data before effectively sending it
-    response.send = function(data) {
+    response.json = function(data) {
         if (request.session.ghRateLimitReset !== undefined) {
             if (new Date(request.session.ghRateLimitReset) > new Date()) {
                 data.limitedUntil = request.session.ghRateLimitReset;
@@ -319,7 +319,7 @@ router.use(function(request, response, next) {
  */
 router.use(function(request, response, next) {
     if (request.session.userId === undefined) {
-        response.status(403).send({ error: "User information couldn't be retrieved from GitHub, we can't know who you are." });
+        response.status(403).json({ error: "User information couldn't be retrieved from GitHub, we can't know who you are." });
     } else {
         next();
     }
@@ -330,7 +330,7 @@ router.use(function(request, response, next) {
  * Return user's information
  */
 router.get("/user", function(request, response) {
-    response.send({ name: request.session.name });
+    response.json({ name: request.session.name });
 });
 
 
@@ -351,7 +351,7 @@ router.get("/commits", function(request, response) {
             { $project: { "day": 1, "hour": 1, "languages": 1, "count": 1, "_id": 0 } }
         ])
         .then(function(commits) {
-            response.send({ commits: commits});
+            response.json({ commits: commits});
         })
 });
 
@@ -398,11 +398,11 @@ router.get("/repositories", function(request, response) {
                 })
         })
         .then(function(data) {
-            response.send(data);
+            response.json(data);
         })
         .catch(function(error) {
             console.log(error);
-            response.status(500).send({});
+            response.status(500).send();
         })
 });
 

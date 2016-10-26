@@ -19,8 +19,6 @@ var User = db.User;
  * from GitHub
  */
 router.use(function(request, response, next) {
-    response.setHeader('Content-Type', 'application/json');
-
     if (request.session.access_token === undefined || request.session.userId !== undefined) {
         next();
     } else {

@@ -22,7 +22,7 @@ router.get("/users", function(request, response) {
     User
         .count()
         .then(function(users) {
-            response.send({ count: users });
+            response.json({ count: users });
         });
 });
 
@@ -35,7 +35,7 @@ router.get("/repositories", function(request, response) {
         .distinct("id")
         .count()
         .then(function(repositories) {
-            response.send({ count: repositories });
+            response.json({ count: repositories });
         });
 });
 
@@ -59,7 +59,7 @@ router.get("/commits", function(request, response) {
         utils.getLanguages()
     ])
         .then(function(data) {
-            response.send({ commits: data[0], languages: data[1] });
+            response.json({ commits: data[0], languages: data[1] });
         });
 });
 
