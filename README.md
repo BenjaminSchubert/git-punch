@@ -8,10 +8,15 @@ An user should be able to :
 * See a graph (pie chart or other graphical representation).
 
 ## About our app
+The landing page can be found [there](https://benjaminschubert.github.io/git-punch/).
+
 ### Features
 Our app consists on using all the commits of a given user to display when he made them (using a punchcard), and in which projects and languages he contributed the most. Global statistics can be displayed as well, based on the aggregation on the commits of each user having visited the webapp.
 
 ### Usage
-When the user arrives on the webapp, he can see the global stats. By going on the "my stats" page, he can log in with his github account and see his stats according to the commits he made, in public and private repos alike.
+When you arrive on the webapp, you can see the global stats (home page). By going on the "my stats" page, you can log in with your github account and see your stats according to the commits you made, in public and private repos alike.
 
-Our landing page can be found [there](https://benjaminschubert.github.io/git-punch/).
+Note: when logging in with your GitHub account, you'll see the app asks for read/write access on your repos. It is needed in order to access to your private repos and commits info.
+
+### About the authors
+Made by Benjamin Schubert & Basile Vu in the TWEB course at HEIG-VD (Team O).
