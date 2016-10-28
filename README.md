@@ -16,7 +16,7 @@ Our app consists on using all the commits of a given user to display when he mad
 ### Usage
 When you arrive on the webapp, you can see the global stats (home page). By going on the "my stats" page, you can log in with your github account and see your stats according to the commits you made, in public and private repos alike.
 
-Note: when logging in with your GitHub account, you'll see the app asks for read/write access on your repos. It is needed in order to access to your private repos and commits info.
+Note: when logging in with your GitHub account, you'll see the app asks for read/write access on your repos. It is needed in order to access the list of your private repos and their commits.
 
 ### About the authors
 Made by Benjamin Schubert & Basile Vu in the TWEB course at HEIG-VD (Team O).
