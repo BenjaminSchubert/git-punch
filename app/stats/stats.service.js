@@ -1,7 +1,11 @@
+"use strict";
+
+var angular = require("angular");
+
 /**
  * Service for the stats module
  */
-require("angular").module('gstats.stats').factory('gstats.stats.service', function($state, $http) {
+angular.module('gstats.stats').factory('gstats.stats.service', function($state, $http) {
     return {
         /**
          * Get all user's repositories and data
