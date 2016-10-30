@@ -1,10 +1,7 @@
-var app = require("angular").module('gstats.stats');
-
-
 /**
  * Service for the stats module
  */
-app.factory('gstats.stats.service', function($state, $http) {
+require("angular").module('gstats.stats').factory('gstats.stats.service', function($state, $http) {
     return {
         /**
          * Get all user's repositories and data

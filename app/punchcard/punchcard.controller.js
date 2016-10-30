@@ -37,7 +37,7 @@ function setupSerie() {
  * Controller for the punchcard module
  */
 require("angular").module("gstats.punchcard").controller(
-    "gstats.punchcard.controller", ["$scope", function PunchcardController($scope) {
+    "gstats.punchcard.controller", ["$scope", function($scope) {
         // the currently selected serie
         $scope.selected = null;
 

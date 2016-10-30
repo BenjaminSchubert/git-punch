@@ -20,7 +20,7 @@ function getTitle(commits, repositories) {
 /**
  * Controller for the stats module
  */
-angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", "$http", "$controller", "gstats.stats.service", function PunchcardController($scope, $http, $controller, $service) {
+angular.module('gstats.stats').controller('gstats.stats.controller', ["$scope", "$http", "$controller", "gstats.stats.service", function($scope, $http, $controller, $service) {
     angular.extend(this, $controller('gstats.punchcard.controller', {$scope: $scope}));
 
     var totalCommits = 0;

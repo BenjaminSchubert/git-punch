@@ -3,7 +3,7 @@
 /**
  * Declaration of the controller for the menu module
  */
-require("angular").module('gstats.menu').controller('gstats.menu.controller', ["$scope", "gstats.auth.service", function AuthService($scope, $auth) {
+require("angular").module('gstats.menu').controller('gstats.menu.controller', ["$scope", "gstats.auth.service", function($scope, $auth) {
     $scope.loggedIn = false;
 
     $auth.loggedIn
