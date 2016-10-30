@@ -113,7 +113,7 @@ require("angular").module("gstats.punchcard").controller(
         });
 
         /**
-         * Removev the serie identified by data from the lsit of displayed series on blur
+         * Remove the serie identified by data from the list of displayed series on blur
          */
         $scope.$on("blur", function(event, data) {
             $scope.findAndRemove($scope.chartConfig.series, data);
