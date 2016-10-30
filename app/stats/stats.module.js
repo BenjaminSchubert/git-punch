@@ -1,11 +1,12 @@
 "use strict";
 
-var angular = require("angular");
-
 require("../punchcard/punchcard.module");
 
 
-angular.module("gstats.stats", ["gstats.punchcard"])
+/**
+ * Declaration of the stats module for the stats page
+ */
+require("angular").module("gstats.stats", ["gstats.punchcard"])
     .config(function ($stateProvider) {
         $stateProvider.state({
             name: 'stats',

@@ -1,6 +1,11 @@
-var angular = require("angular");
+"use strict";
 
-
+/**
+ * Find the given information in the list of series and remove it
+ *
+ * @param series list of series from which to remove
+ * @param info of what to remove
+ */
 function findAndRemove(series, info) {
     series.splice(
         series.findIndex(function(element) {
@@ -11,6 +16,11 @@ function findAndRemove(series, info) {
 }
 
 
+/**
+ * Creates a new array of data for the serie
+ *
+ * @returns {Array}
+ */
 function setupSerie() {
     var array = [];
     for (var i=0; i < 24; i++) {
@@ -23,14 +33,30 @@ function setupSerie() {
 }
 
 
-angular.module("gstats.punchcard").controller(
+/**
+ * Controller for the punchcard module
+ */
+require("angular").module("gstats.punchcard").controller(
     "gstats.punchcard.controller", ["$scope", function PunchcardController($scope) {
+        // the currently selected serie
         $scope.selected = null;
+
+        // time to wait before being unlocked by the GitHub API
         $scope.retryIn = undefined;
 
         $scope.setupSerie = setupSerie;
         $scope.findAndRemove = findAndRemove;
 
+        /**
+         * Create a new serie
+         *
+         * @param category in which the serie is to be put
+         * @param color of the data
+         * @param id of the serie
+         * @param title of the serie
+         * @param url to which to go when clicking on the serie
+         * @returns {{category: *, color: *, commits: number, data: *, id: *, title: *, url: *}}
+         */
         $scope.createSerie = function(category, color, id, title, url) {
             return {
                 category: category,
@@ -43,10 +69,21 @@ angular.module("gstats.punchcard").controller(
             }
         };
 
+        /**
+         * get the title of the chart
+         *
+         * @returns {{text: string}}
+         */
         $scope.getTitle = function() {
             return { text: "Commit statistics" };
         };
 
+        /**
+         * Add a commit to the given serie
+         *
+         * @param serie to which to add the commit
+         * @param commit to add
+         */
         $scope.addCommit = function(serie, commit) {
             serie.data[commit.hour * 7 + commit.day][2] += 1;
             serie.commits += 1;
@@ -55,6 +92,9 @@ angular.module("gstats.punchcard").controller(
         $scope.globalSerie = $scope.createSerie("global", "#888");
         $scope.otherSeries = {};
 
+        /**
+         * reset the selection of the serie to show
+         */
         $scope.reset = function() {
             if ($scope.selected == null) {
                 return;
@@ -65,14 +105,23 @@ angular.module("gstats.punchcard").controller(
             $scope.selected = null;
         };
 
+        /**
+         * Add the serie identified by data to the list of displayed series on hover
+         */
         $scope.$on("hover", function(event, data) {
            $scope.chartConfig.series.push($scope.otherSeries[data.category][data.id]);
         });
 
+        /**
+         * Removev the serie identified by data from the lsit of displayed series on blur
+         */
         $scope.$on("blur", function(event, data) {
             $scope.findAndRemove($scope.chartConfig.series, data);
         });
 
+        /**
+         * Select the serie identified by data to be permanently shown on the scope
+         */
         $scope.$on("select", function(event, data) {
             if ($scope.selected !== null) {
                 $scope.findAndRemove($scope.chartConfig.series, $scope.selected);
@@ -84,6 +133,11 @@ angular.module("gstats.punchcard").controller(
             $scope.$broadcast("reset-selection");
         });
 
+        /**
+         * Highchart configuration
+         *
+         * @type {{options: {chart: {type: string, plotBorderWidth: number, zoomType: string}, legend: {enabled: boolean}, plotOptions: {bubble: {minSize: string, maxSize: string}, series: {animation: boolean, states: {hover: {enabled: boolean}}}}, tooltip: {formatter: $scope.chartConfig.options.tooltip.formatter}}, title: *, loading: boolean, xAxis: {minorGridLineDashStyle: string, minorTickInterval: number, minorTickWidth: number, tickInterval: number, labels: {formatter: $scope.chartConfig.xAxis.labels.formatter}}, yAxis: {title: {text: null}, reversed: boolean, startOnTick: boolean, endOnTick: boolean, maxPadding: number, lineWidth: number, categories: string[]}, series: *[]}}
+         */
         $scope.chartConfig = {
             options: {
                 chart: {

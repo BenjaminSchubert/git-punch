@@ -1,13 +1,24 @@
 var angular = require("angular");
 
 
+/**
+ * Formats the title for the graph
+ *
+ * @param commits number of commits
+ * @param repositories number of repositories
+ * @param users number of users
+ * @returns {{text: string}}
+ */
 function getTitle(commits, repositories, users) {
     return {
-        text: 'Commit Statistics on ' + commits + " commits accross " + repositories + " repositories by " + users + " users."
+        text: 'Commit Statistics on ' + commits + " commits across " + repositories + " repositories by " + users + " users."
     }
 }
 
 
+/**
+ * Controller for the home module
+ */
 angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$http", "$controller", "gstats.home.service", function PunchcardController($scope, $http, $controller, $service) {
     angular.extend(this, $controller('gstats.punchcard.controller', {$scope: $scope}));
 
@@ -20,11 +31,20 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
     $scope.otherSeries.languages = {};
     $scope.personalSerie = $scope.createSerie("Personal", "#333");
 
+    /**
+     * Add a commit to the given serie
+     *
+     * @param serie to which to add a commit
+     * @param commit to add
+     */
     $scope.addCommit = function(serie, commit) {
         serie.data[commit.hour * 7 + commit.day][2] += commit.count;
         serie.commits += commit.count;
     };
 
+    /**
+     * Show the user's own commits on the chart
+     */
     $scope.highlight = function() {
         if (!$scope.personalShown) {
             $scope.chartConfig.series.push($scope.personalSerie);
@@ -32,6 +52,9 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
         }
     };
 
+    /**
+     * Hide the user's own commits
+     */
     $scope.removeHighlight = function() {
         if ($scope.personalShown && !fixPersonalShown) {
             $scope.findAndRemove($scope.chartConfig.series, $scope.personalSerie);
@@ -39,6 +62,9 @@ angular.module('gstats.home').controller('gstats.home.controller', ["$scope", "$
         }
     };
 
+    /**
+     * permanently show the user's own commits
+     */
     $scope.fixHighlight = function() {
         fixPersonalShown = !fixPersonalShown;
 

@@ -1,13 +1,12 @@
-var angular = require("angular");
+"use strict";
 
-
-angular.module('gstats.menu').controller('gstats.menu.controller', ["$scope", "gstats.auth.service", function PunchcardController($scope, $auth) {
+/**
+ * Declaration of the controller for the menu module
+ */
+require("angular").module('gstats.menu').controller('gstats.menu.controller', ["$scope", "gstats.auth.service", function($scope, $auth) {
     $scope.loggedIn = false;
 
     $auth.loggedIn
-        .catch(function(error) {
-            console.log(error);
-        })
         .then(function(loggedIn) {
             $scope.loggedIn = loggedIn;
         });

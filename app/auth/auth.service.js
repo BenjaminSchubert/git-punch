@@ -1,10 +1,16 @@
-require("angular");
+"use strict";
 
-var app = angular.module('gstats.auth');
+var app = require("angular").module('gstats.auth');
 
 
+/**
+ * Service to handle authentication
+ */
 app.factory('gstats.auth.service', function($state, $http) {
     return {
+        /**
+         * Get user's name
+         */
         get user() {
             return $http.get("api/private/user")
                 .then(function(user) {
@@ -12,6 +18,11 @@ app.factory('gstats.auth.service', function($state, $http) {
                 });
         },
 
+        /**
+         * Get whether the user is logged in or not
+         *
+         * @returns {boolean|Promise}
+         */
         get loggedIn() {
             return this.user
                 .then(function() {
